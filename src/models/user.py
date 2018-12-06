@@ -15,6 +15,7 @@ class UserModel(db.Model):
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
     cars = db.relationship("CarModel", back_populates="owner")
     communities = db.relationship("CommunityModel", secondary='community_user_link')
+    tours = db.relationship("TourModel", secondary='tour_passenger_link')
     reset_password_hash = db.Column(db.String(120), nullable=True, default=None)
     reset_password_hash_created = db.Column(db.DateTime(timezone=True), default=None, nullable=True)
 

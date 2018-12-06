@@ -34,6 +34,7 @@ def configure_api(api):
     api.add_resource(tour_resources.AllTours, '/communities/<int:community_id>/tours')
     api.add_resource(tour_resources.LatestTour, '/communities/<int:community_id>/tours/latest')
     api.add_resource(tour_resources.FinishTour, '/communities/<int:community_id>/tours/<int:id>/finish')
+    api.add_resource(community_resources.CommunityUsers, '/communities/<int:community_id>/users')
     api.add_resource(tour_resources.ForceFinishTour, '/communities/<int:community_id>/tours/<int:id>/force-finish')
     api.add_resource(tour_resources.SingleTour, '/communities/<int:community_id>/tours/<int:id>')
     api.add_resource(tour_resources.CommunityTours, '/communities/<int:community_id>/tours')

@@ -43,10 +43,13 @@ class AllPayoffs(Resource):
         total_km = sum(map(lambda t: t.end_km - t.start_km, tours))
         km_per_user = {}
         for tour in tours:
-            if tour.owner.id not in km_per_user:
-                km_per_user[tour.owner.id] = 0
-            km_per_user[tour.owner.id] += tour.end_km - tour.start_km
-        # If there is a user from refuels missing, he has zero costs
+            involved_users = [tour.owner] + tour.passengers
+            km_per_involved_user = (tour.end_km - tour.start_km) / len(involved_users)
+            for involved_user in involved_users:
+                if involved_user.id not in km_per_user:
+                    km_per_user[involved_user.id] = 0
+                km_per_user[involved_user.id] += km_per_involved_user
+        # If there is a user from refuels missing, he has zero costs/kms
         for refuel in refuels:
             if refuel.owner.id not in km_per_user:
                 km_per_user[refuel.owner.id] = 0
@@ -59,6 +62,9 @@ class AllPayoffs(Resource):
         for tour in tours:
             if tour.owner.id not in user_dictionary:
                 user_dictionary[tour.owner.id] = tour.owner
+            for passenger in tour.passengers:
+                if passenger.id not in user_dictionary:
+                    user_dictionary[passenger.id] = passenger
         for refuel in refuels:
             if refuel.owner.id not in user_dictionary:
                 user_dictionary[refuel.owner.id] = refuel.owner

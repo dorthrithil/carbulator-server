@@ -27,7 +27,7 @@ class TourModel(db.Model):
     force_finished_by = db.relationship('UserModel', foreign_keys=[force_finished_by_id])
     payoff_id = db.Column(db.Integer, db.ForeignKey('payoffs.id'))
     is_open = db.Column(db.Boolean, default=True)
-    passengers = db.relationship('TourPassengerLinkModel', secondary='tour_passenger_link')
+    passengers = db.relationship('UserModel', secondary='tour_passenger_link')
 
     def persist(self):
         db.session.add(self)
