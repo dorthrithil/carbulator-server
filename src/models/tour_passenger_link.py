@@ -5,8 +5,7 @@ class TourPassengerLinkModel(db.Model):
     __tablename__ = 'tour_passenger_link'
 
     tour_id = db.Column(db.Integer, db.ForeignKey('tours.id'), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                        primary_key=True)  # TODO Does this mean that the combined fields are the prmary key?
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     tour = db.relationship('TourModel')
     user = db.relationship('UserModel')
     time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())

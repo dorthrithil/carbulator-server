@@ -241,3 +241,17 @@ class UserCommunities(Resource):
             c.is_editable = is_owner
 
         return user_communities, 200
+
+
+class CommunityUsers(Resource):
+
+    @jwt_required
+    @marshal_with(UserModel.get_marshaller())
+    def get(self, community_id):
+        user = UserModel.find_by_username(get_jwt_identity())
+        community = CommunityModel.find_by_id(community_id)
+
+        if user not in community.users:
+            abort(401, message=UNAUTHORIZED)
+
+        return community.users, 200
