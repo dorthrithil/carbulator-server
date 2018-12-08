@@ -43,4 +43,4 @@ from src.api import configure_api
 
 configure_api(api)
 
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, compare_type=True)

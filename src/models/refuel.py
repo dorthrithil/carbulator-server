@@ -9,8 +9,8 @@ class RefuelModel(db.Model):
     __tablename__ = 'refuels'
 
     id = db.Column(db.Integer, primary_key=True)
-    costs = db.Column(db.Float, nullable=False)
-    liters = db.Column(db.Float)
+    costs = db.Column(db.DECIMAL(10,2), nullable=False)
+    liters = db.Column(db.DECIMAL(10,2))
     gas_station_name = db.Column(db.String(120))
     time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())

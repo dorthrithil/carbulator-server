@@ -9,7 +9,7 @@ class DebtModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     is_settled = db.Column(db.Boolean, default=False)
-    amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.DECIMAL(10,2), nullable=False)
     time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
     debtee_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
