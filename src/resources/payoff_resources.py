@@ -77,7 +77,7 @@ class AllPayoffs(Resource):
                 if user_id != refuel.owner.id:
                     debtee_position = list(user_dictionary.keys()).index(user_id)
                     debt_amount = refuel.costs * km_fraction_per_user[user_id]
-                    debt_matrix[debtee_position, recipient_position] += debt_amount
+                    debt_matrix[debtee_position, recipient_position] += float(debt_amount)
 
         # Simplify debt matrix
         debt_matrix = simplify_debt_matrix(debt_matrix)
