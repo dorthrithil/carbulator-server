@@ -4,8 +4,9 @@ from typing import List
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
+from src.messages.marshalling import SimpleMessage
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED, \
-    INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST
+    INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED
 from src.models.community import CommunityModel
 from src.models.task import TaskModel
 from src.models.user import UserModel
@@ -78,11 +79,12 @@ class UpdateTask(Resource):
         data = parser.parse_args()
 
         task: TaskModel = TaskModel.find_by_id(task_id)
-        community_member_ids = [m.id for m in task.community.users]
-        user = UserModel.find_by_username(get_jwt_identity())
 
         if not task:
-            abort(400, message=TASK_DOESNT_EXIST)
+            abort(404, message=TASK_DOESNT_EXIST)
+
+        community_member_ids = [m.id for m in task.community.users]
+        user = UserModel.find_by_username(get_jwt_identity())
 
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
@@ -117,11 +119,12 @@ class GetTask(Resource):
     def get(self, task_id):
 
         task: TaskModel = TaskModel.find_by_id(task_id)
-        community_member_ids = [m.id for m in task.community.users]
-        user = UserModel.find_by_username(get_jwt_identity())
 
         if not task:
-            abort(400, message=TASK_DOESNT_EXIST)
+            abort(404, message=TASK_DOESNT_EXIST)
+
+        community_member_ids = [m.id for m in task.community.users]
+        user = UserModel.find_by_username(get_jwt_identity())
 
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
@@ -134,7 +137,6 @@ class GetCommunityTasks(Resource):
     @jwt_required
     @marshal_with(TaskModel.get_marshaller())
     def get(self, community_id):
-
         tasks: List[TaskModel] = TaskModel.find_by_community(community_id)
         community: CommunityModel = CommunityModel.find_by_id(community_id)
         community_member_ids = [m.id for m in community.users]
@@ -144,3 +146,27 @@ class GetCommunityTasks(Resource):
             abort(401, message=UNAUTHORIZED)
 
         return tasks, 200
+
+
+class DeleteTask(Resource):
+
+    @jwt_required
+    @marshal_with(SimpleMessage.get_marshaller())
+    def delete(self, task_id):
+
+        task: TaskModel = TaskModel.find_by_id(task_id)
+
+        if not task:
+            abort(400, message=TASK_DOESNT_EXIST)
+
+        community_member_ids = [m.id for m in task.community.users]
+        user = UserModel.find_by_username(get_jwt_identity())
+
+        if user.id not in community_member_ids:
+            abort(401, message=UNAUTHORIZED)
+
+        try:
+            task.delete_by_id(task_id)
+            return SimpleMessage(TASK_DELETED), 200
+        except:
+            abort(500, message=INTERNAL_SERVER_ERROR)
