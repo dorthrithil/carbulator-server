@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import List
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
@@ -126,3 +127,20 @@ class GetTask(Resource):
             abort(401, message=UNAUTHORIZED)
 
         return task, 200
+
+
+class GetCommunityTasks(Resource):
+
+    @jwt_required
+    @marshal_with(TaskModel.get_marshaller())
+    def get(self, community_id):
+
+        tasks: List[TaskModel] = TaskModel.find_by_community(community_id)
+        community: CommunityModel = CommunityModel.find_by_id(community_id)
+        community_member_ids = [m.id for m in community.users]
+        user = UserModel.find_by_username(get_jwt_identity())
+
+        if user.id not in community_member_ids:
+            abort(401, message=UNAUTHORIZED)
+
+        return tasks, 200
