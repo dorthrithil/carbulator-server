@@ -69,12 +69,9 @@ class FinishTour(Resource):
         tour.end_time = datetime.datetime.now()
         tour.passengers = passengers
         tour.end_km = data['end_km']
-        print(tour.end_km)
         tour.comment = data['comment']
         tour.parking_position = data['parking_position']
         tour.persist()
-        print(tour.end_km)
-
 
         return tour, 200
 
