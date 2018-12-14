@@ -51,5 +51,6 @@ def configure_api(api):
 
     api.add_resource(task_resources.CreateTask, '/communities/<int:community_id>/tasks')
     api.add_resource(task_resources.UpdateTask, '/tasks/<int:task_id>')
+    api.add_resource(task_resources.GetTask, '/tasks/<int:task_id>')
 
     api.add_resource(hello_world_resources.HelloWorld, '/hello')

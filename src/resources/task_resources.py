@@ -107,3 +107,22 @@ class UpdateTask(Resource):
             return task, 200
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
+
+
+class GetTask(Resource):
+
+    @jwt_required
+    @marshal_with(TaskModel.get_marshaller())
+    def get(self, task_id):
+
+        task: TaskModel = TaskModel.find_by_id(task_id)
+        community_member_ids = [m.id for m in task.community.users]
+        user = UserModel.find_by_username(get_jwt_identity())
+
+        if not task:
+            abort(400, message=TASK_DOESNT_EXIST)
+
+        if user.id not in community_member_ids:
+            abort(401, message=UNAUTHORIZED)
+
+        return task, 200
