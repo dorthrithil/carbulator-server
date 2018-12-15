@@ -2,9 +2,10 @@ from flask_restful import fields
 
 from src.app import db
 from src.exceptions.no_data import NoData
+from src.models.task import TaskModel
 
 
-class TaskModel(db.Model):
+class TaskInstanceModel(db.Model):
     __tablename__ = 'task_instances'
 
     id = db.Column(db.Integer, primary_key=True)

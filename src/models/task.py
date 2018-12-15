@@ -17,9 +17,9 @@ class TaskModel(db.Model):
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel')
     km_interval = db.Column(db.Integer, nullable=True)
-    km_interval_start = db.Column(db.DECIMAL(precision=10, scale=1), nullable=True)
+    km_next_instance = db.Column(db.DECIMAL(precision=10, scale=1), nullable=True)
     time_interval = db.Column(db.Interval, nullable=True)
-    time_interval_start = db.Column(db.DateTime(timezone=True), nullable=True)
+    time_next_instance = db.Column(db.DateTime(timezone=True), nullable=True)
     name = db.Column(db.String(120))
     description = db.Column(db.String(120))
 
@@ -33,14 +33,14 @@ class TaskModel(db.Model):
             'id': fields.Integer,
             'time_created': fields.DateTime,
             'time_updated': fields.DateTime,
-            'time_interval_start': fields.DateTime,
+            'time_next_instance': fields.DateTime,
             'time_interval': fields.String,
             'owner': fields.Nested(UserModel.get_marshaller()),
             'community': fields.Nested(CommunityModel.get_marshaller()),
             'name': fields.String,
             'description': fields.String,
             'km_interval': fields.Integer,
-            'km_interval_start': fields.Float,
+            'km_next_instance': fields.Float,
         }
 
     @classmethod

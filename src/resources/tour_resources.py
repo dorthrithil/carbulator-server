@@ -15,6 +15,7 @@ from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, 
 from src.models.community import CommunityModel
 from src.models.tour import TourModel
 from src.models.user import UserModel
+from src.resources.task_instance_resources import create_km_triggered_task_instances
 
 parser = reqparse.RequestParser()
 parser.add_argument('start_km', help='This field cannot be blank', required=True, type=float)
@@ -73,6 +74,8 @@ class FinishTour(Resource):
         tour.parking_position = data['parking_position']
         tour.persist()
 
+        create_km_triggered_task_instances(community_id, tour.end_km)
+
         return tour, 200
 
 
@@ -111,6 +114,8 @@ class ForceFinishTour(Resource):
         tour.is_force_finished = True
         tour.force_finished_by = user
         tour.persist()
+
+        create_km_triggered_task_instances(community_id, tour.end_km)
 
         return tour, 200
 

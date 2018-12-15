@@ -19,12 +19,12 @@ class CreateTask(Resource):
     @marshal_with(TaskModel.get_marshaller())
     def post(self, community_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('time_interval_start', type=moment, required=False)
+        parser.add_argument('time_next_instance', type=moment, required=False)
         parser.add_argument('time_interval', type=int, required=False)
         parser.add_argument('name', type=str)
         parser.add_argument('description', type=str)
         parser.add_argument('km_interval', type=int, required=False)
-        parser.add_argument('km_interval_start', type=float, required=False)
+        parser.add_argument('km_next_instance', type=float, required=False)
         data = parser.parse_args()
 
         owner = UserModel.find_by_username(get_jwt_identity())
@@ -37,9 +37,9 @@ class CreateTask(Resource):
         if owner.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        if not (data['time_interval_start'] and data['time_interval'] or data['km_interval'] and data[
-            'km_interval_start']) or data['km_interval'] and (data['time_interval'] or data['time_interval_start']) or \
-                data['time_interval'] and (data['km_interval'] or data['km_interval_start']):
+        if not (data['time_next_instance'] and data['time_interval'] or data['km_interval'] and data[
+            'km_next_instance']) or data['km_interval'] and (data['time_interval'] or data['time_next_instance']) or \
+                data['time_interval'] and (data['km_interval'] or data['km_next_instance']):
             abort(400, message=TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED)
 
         time_interval = None
@@ -50,9 +50,9 @@ class CreateTask(Resource):
             owner=owner,
             community=community,
             time_interval=time_interval,
-            time_interval_start=data['time_interval_start'],
+            time_next_instance=data['time_next_instance'],
             km_interval=data['km_interval'],
-            km_interval_start=data['km_interval_start'],
+            km_next_instance=data['km_next_instance'],
             name=data['name'],
             description=data['description'],
         )
@@ -70,12 +70,12 @@ class UpdateTask(Resource):
     @marshal_with(TaskModel.get_marshaller())
     def put(self, task_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('time_interval_start', type=moment, required=False)
+        parser.add_argument('time_next_instance', type=moment, required=False)
         parser.add_argument('time_interval', type=int, required=False)
         parser.add_argument('name', type=str)
         parser.add_argument('description', type=str)
         parser.add_argument('km_interval', type=int, required=False)
-        parser.add_argument('km_interval_start', type=float, required=False)
+        parser.add_argument('km_next_instance', type=float, required=False)
         data = parser.parse_args()
 
         task: TaskModel = TaskModel.find_by_id(task_id)
@@ -89,9 +89,9 @@ class UpdateTask(Resource):
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        if not (data['time_interval_start'] and data['time_interval'] or data['km_interval'] and data[
-            'km_interval_start']) or data['km_interval'] and (data['time_interval'] or data['time_interval_start']) or \
-                data['time_interval'] and (data['km_interval'] or data['km_interval_start']):
+        if not (data['time_next_instance'] and data['time_interval'] or data['km_interval'] and data[
+            'km_next_instance']) or data['km_interval'] and (data['time_interval'] or data['time_next_instance']) or \
+                data['time_interval'] and (data['km_interval'] or data['km_next_instance']):
             abort(400, message=TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED)
 
         time_interval = None
@@ -99,9 +99,9 @@ class UpdateTask(Resource):
             time_interval = timedelta(days=data['time_interval'])
 
         task.time_interval = time_interval
-        task.time_interval_start = data['time_interval_start']
+        task.time_next_instance = data['time_next_instance']
         task.km_interval = data['km_interval']
-        task.km_interval_start = data['km_interval_start']
+        task.km_next_instance = data['km_next_instance']
         task.name = data['name']
         task.description = data['description']
 

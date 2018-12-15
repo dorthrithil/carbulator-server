@@ -30,7 +30,6 @@ env = Environment(
 )
 
 from src.models.revoked_token import RevokedTokenModel
-from src.models.tour_passenger_link import TourPassengerLinkModel # todo can be removed after it is used in some resource
 
 
 @jwt.token_in_blacklist_loader
@@ -43,4 +42,4 @@ from src.api import configure_api
 
 configure_api(api)
 
-migrate = Migrate(app, db, compare_type=True)
+migrate = Migrate(app, db, compare_type=False)
