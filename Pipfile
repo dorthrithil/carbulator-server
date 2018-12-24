@@ -16,6 +16,7 @@ networkx = "*"
 flask-cors = "*"
 flask-migrate = "*"
 gunicorn = "*"
+schedule = "*"
 
 [dev-packages]
 

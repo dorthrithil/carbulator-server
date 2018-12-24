@@ -8,7 +8,7 @@ from flask_restful import Resource, marshal_with, reqparse, abort
 from src.messages.marshalling import SimpleMessage
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED, \
     INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED, TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM, \
-    TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM
+    TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME
 from src.models.community import CommunityModel
 from src.models.task import TaskModel
 from src.models.tour import TourModel
@@ -50,7 +50,7 @@ class CreateTask(Resource):
             abort(400, message=TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM)
 
         if data['time_next_instance'] and data['time_next_instance'] < datetime.now(pytz.utc):
-            abort(400, message=TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM)
+            abort(400, message=TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME)
 
         time_interval = None
         if data['time_interval']:

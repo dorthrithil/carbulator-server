@@ -42,7 +42,10 @@ def check_if_token_in_blacklist(decrypted_token):
 
 
 from src.api import configure_api
+from src.util.scheduler import Scheduler
 
 configure_api(api)
 
 migrate = Migrate(app, db, compare_type=False)
+
+scheduler = Scheduler()

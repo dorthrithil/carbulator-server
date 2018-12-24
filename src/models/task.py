@@ -58,6 +58,10 @@ class TaskModel(db.Model):
         return cls.query.filter_by(id=task_id).first()
 
     @classmethod
+    def return_all(cls):
+        return cls.query.all()
+
+    @classmethod
     def find_by_community(cls, community_id):
         return cls.query \
             .filter_by(community_id=community_id) \
