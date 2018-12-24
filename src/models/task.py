@@ -22,6 +22,7 @@ class TaskModel(db.Model):
     time_next_instance = db.Column(db.DateTime(timezone=True), nullable=True)
     name = db.Column(db.String(120))
     description = db.Column(db.String(120))
+    instances = db.relationship("TaskInstanceModel", cascade="all, delete")
 
     def persist(self):
         db.session.add(self)
