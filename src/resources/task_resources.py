@@ -1,14 +1,17 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import List
 
+import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
 from src.messages.marshalling import SimpleMessage
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED, \
-    INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED
+    INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED, TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM, \
+    TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM
 from src.models.community import CommunityModel
 from src.models.task import TaskModel
+from src.models.tour import TourModel
 from src.models.user import UserModel
 from src.util.parser_types import moment
 
@@ -41,6 +44,13 @@ class CreateTask(Resource):
             'km_next_instance']) or data['km_interval'] and (data['time_interval'] or data['time_next_instance']) or \
                 data['time_interval'] and (data['km_interval'] or data['km_next_instance']):
             abort(400, message=TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED)
+
+        newest_tour: TourModel = TourModel.find_newest_tour_for_community(community_id)
+        if data['km_next_instance'] and data['km_next_instance'] < newest_tour.end_km:
+            abort(400, message=TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM)
+
+        if data['time_next_instance'] and data['time_next_instance'] < datetime.now(pytz.utc):
+            abort(400, message=TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM)
 
         time_interval = None
         if data['time_interval']:

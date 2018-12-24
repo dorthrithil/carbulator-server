@@ -15,6 +15,8 @@ class TaskInstanceModel(db.Model):
     task = db.relationship('TaskModel', foreign_keys=[task_id])
     km_created_at = db.Column(db.DECIMAL(precision=10, scale=1), nullable=True)
     is_open = db.Column(db.Boolean)
+    community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
+    community = db.relationship('CommunityModel')
 
     def persist(self):
         db.session.add(self)
@@ -48,4 +50,10 @@ class TaskInstanceModel(db.Model):
     def find_by_task(cls, task_id):
         return cls.query \
             .filter_by(task_id=task_id) \
+            .all()
+
+    @classmethod
+    def find_by_community(cls, community_id):
+        return cls.query \
+            .filter_by(community_id=community_id) \
             .all()

@@ -30,6 +30,9 @@ env = Environment(
 )
 
 from src.models.revoked_token import RevokedTokenModel
+from src.models.tour_passenger_link import TourPassengerLinkModel
+
+__all__ = ['TourPassengerLinkModel']  # prevents pycharm from removing predictor as unused import
 
 
 @jwt.token_in_blacklist_loader
