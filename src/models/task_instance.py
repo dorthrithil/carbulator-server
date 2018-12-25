@@ -17,6 +17,8 @@ class TaskInstanceModel(db.Model):
     is_open = db.Column(db.Boolean)
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel')
+    time_finished = db.Column(db.DateTime(timezone=True), nullable=True)
+
 
     def persist(self):
         db.session.add(self)
@@ -28,6 +30,7 @@ class TaskInstanceModel(db.Model):
             'id': fields.Integer,
             'time_created': fields.DateTime,
             'time_updated': fields.DateTime,
+            'time_finished': fields.DateTime,
             'task': fields.Nested(TaskModel.get_marshaller()),
             'is_open': fields.Boolean,
             'km_created_at': fields.Float,

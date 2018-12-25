@@ -80,9 +80,29 @@ class GetOpenCommunityTaskInstances(Resource):
         community_member_ids = [m.id for m in community.users]
         user = UserModel.find_by_username(get_jwt_identity())
 
-        task_instances: List[TaskModel] = TaskInstanceModel.find_by_community(community_id)
-
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        return task_instances, 200
+        task_instances: List[TaskInstanceModel] = TaskInstanceModel.find_by_community(community_id)
+        open_task_instances = [i for i in task_instances if i.is_open]
+
+        return open_task_instances, 200
+
+
+class FinishTaskInstances(Resource):
+
+    @jwt_required
+    @marshal_with(TaskInstanceModel.get_marshaller())
+    def put(self, task_instance_id):
+        user = UserModel.find_by_username(get_jwt_identity())
+        task_instance: TaskInstanceModel = TaskInstanceModel.find_by_id(task_instance_id)
+
+        community_member_ids = [m.id for m in task_instance.community.users]
+        if user.id not in community_member_ids:
+            abort(401, message=UNAUTHORIZED)
+
+        task_instance.is_open = False
+        task_instance.time_finished = datetime.now(pytz.utc)
+        task_instance.persist()
+
+        return task_instance, 200
