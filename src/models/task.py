@@ -2,6 +2,7 @@ from flask_restful import fields
 
 from src.app import db
 from src.exceptions.no_data import NoData
+from src.messages.marshalling_custom_fields import TimedeltaDays
 from src.models.community import CommunityModel
 from src.models.user import UserModel
 
@@ -35,13 +36,14 @@ class TaskModel(db.Model):
             'time_created': fields.DateTime,
             'time_updated': fields.DateTime,
             'time_next_instance': fields.DateTime,
-            'time_interval': fields.String,
+            'time_interval': TimedeltaDays,
             'owner': fields.Nested(UserModel.get_marshaller()),
             'community': fields.Nested(CommunityModel.get_marshaller()),
             'name': fields.String,
             'description': fields.String,
             'km_interval': fields.Integer,
             'km_next_instance': fields.Float,
+            'km_to_next_instance': fields.Float
         }
 
     @classmethod

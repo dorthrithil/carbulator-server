@@ -5,7 +5,7 @@ import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
-from src.messages.marshalling import SimpleMessage
+from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED, \
     INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED, TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM, \
     TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME
@@ -139,6 +139,10 @@ class GetTask(Resource):
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
+        latest_tour = TourModel.find_newest_tour_for_community(task.community.id)
+        if task.km_next_instance:
+            task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+
         return task, 200
 
 
@@ -154,6 +158,11 @@ class GetCommunityTasks(Resource):
 
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
+
+        latest_tour = TourModel.find_newest_tour_for_community(community_id)
+        for task in tasks:
+            if task.km_next_instance:
+                task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
 
         return tasks, 200
 

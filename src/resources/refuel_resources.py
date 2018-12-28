@@ -2,7 +2,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
 from src.exceptions.no_data import NoData
-from src.messages.marshalling import SimpleMessage
+from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, REFUEL_DELETED, \
     REFUEL_DOESNT_EXIST, CANT_CHANGE_REFUEL_COMMUNITY
 from src.models.community import CommunityModel

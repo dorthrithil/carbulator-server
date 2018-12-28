@@ -6,7 +6,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_r
                                 get_jwt_identity, get_raw_jwt)
 from flask_restful import Resource, reqparse, marshal_with, abort
 
-from src.messages.marshalling import SimpleMessage, AuthResponse
+from src.messages.marshalling_objects import SimpleMessage, AuthResponse
 from src.messages.messages import USER_ALREADY_EXISTS, USER_CREATION_SUCCESS, INTERNAL_SERVER_ERROR, LOGIN_SUCCESS, \
     USER_DOESNT_EXIST, WRONG_CREDENTIALS, ACCESS_TOKEN_REVOKED, REFRESH_TOKEN_REVOKED, USERNAME_TOO_SHORT, \
     USERNAME_INVALID, PASSWORD_TOO_SHORT, EMAIL_INVALID, USER_NOT_FOUND, RESET_PASSWORD_MAIL_SENT, \
