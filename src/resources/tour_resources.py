@@ -95,6 +95,9 @@ class ForceFinishTour(Resource):
         if user.id == tour.owner.id:
             abort(401, message=UNAUTHORIZED)
 
+        if community_id != tour.community.id:
+            abort(401, message=UNAUTHORIZED)
+
         if user.id not in [u.id for u in tour.community.users]:
             abort(401, message=UNAUTHORIZED)
 
