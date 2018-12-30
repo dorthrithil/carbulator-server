@@ -16,6 +16,21 @@ from src.models.user import UserModel
 from src.util.parser_types import moment
 
 
+def set_km_to_next_instance(tasks):
+    """
+    Sets the `km_to_next_instance` property on the given task or list of tasks.
+    :param tasks: Task or list of tasks.
+    """
+    is_list = isinstance(tasks, (list,))
+    if not is_list:
+        tasks = [tasks]
+    latest_tour = TourModel.find_newest_tour_for_community(tasks[0].community.id)
+    for task in tasks:
+        if task.km_next_instance:
+            task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+
+
+
 class CreateTask(Resource):
 
     @jwt_required
@@ -69,11 +84,7 @@ class CreateTask(Resource):
 
         try:
             new_task.persist()
-
-            latest_tour = TourModel.find_newest_tour_for_community(new_task.community.id)
-            if new_task.km_next_instance:
-                new_task.km_to_next_instance = new_task.km_next_instance - latest_tour.end_km
-
+            set_km_to_next_instance(new_task)
             return new_task, 201
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
@@ -122,11 +133,7 @@ class UpdateTask(Resource):
 
         try:
             task.persist()
-
-            latest_tour = TourModel.find_newest_tour_for_community(task.community.id)
-            if task.km_next_instance:
-                task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
-
+            set_km_to_next_instance(task)
             return task, 200
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
@@ -149,9 +156,7 @@ class GetTask(Resource):
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        latest_tour = TourModel.find_newest_tour_for_community(task.community.id)
-        if task.km_next_instance:
-            task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+        set_km_to_next_instance(task)
 
         return task, 200
 
@@ -169,10 +174,7 @@ class GetCommunityTasks(Resource):
         if user.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        latest_tour = TourModel.find_newest_tour_for_community(community_id)
-        for task in tasks:
-            if task.km_next_instance:
-                task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+        set_km_to_next_instance(tasks)
 
         return tasks, 200
 
