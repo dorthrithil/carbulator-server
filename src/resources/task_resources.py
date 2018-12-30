@@ -69,6 +69,11 @@ class CreateTask(Resource):
 
         try:
             new_task.persist()
+
+            latest_tour = TourModel.find_newest_tour_for_community(new_task.community.id)
+            if new_task.km_next_instance:
+                new_task.km_to_next_instance = new_task.km_next_instance - latest_tour.end_km
+
             return new_task, 201
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
@@ -117,6 +122,11 @@ class UpdateTask(Resource):
 
         try:
             task.persist()
+
+            latest_tour = TourModel.find_newest_tour_for_community(task.community.id)
+            if task.km_next_instance:
+                task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+
             return task, 200
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)

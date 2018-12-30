@@ -36,6 +36,8 @@ def create_km_triggered_task_instances(community_id, km):
 
                 # Update km trigger and persist task
                 task.km_next_instance += task.km_interval
+                if task.km_next_instance <= km:
+                    task.km_next_instance = km + 1
                 task.persist()
         except:
             # Don't fail on all just because one instance is bad
