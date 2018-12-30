@@ -3,6 +3,7 @@ from flask_restful import fields
 from src.app import db
 from src.exceptions.no_data import NoData
 from src.models.task import TaskModel
+from src.models.user import UserModel
 
 
 class TaskInstanceModel(db.Model):
@@ -18,6 +19,8 @@ class TaskInstanceModel(db.Model):
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel')
     time_finished = db.Column(db.DateTime(timezone=True), nullable=True)
+    finished_by = db.relationship('UserModel')
+    finished_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
 
     def persist(self):
@@ -34,6 +37,7 @@ class TaskInstanceModel(db.Model):
             'task': fields.Nested(TaskModel.get_marshaller()),
             'is_open': fields.Boolean,
             'km_created_at': fields.Float,
+            'finished_by': fields.Nested(UserModel.get_marshaller())
         }
 
     @classmethod

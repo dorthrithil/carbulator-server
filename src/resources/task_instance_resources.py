@@ -105,6 +105,7 @@ class FinishTaskInstances(Resource):
 
         task_instance.is_open = False
         task_instance.time_finished = datetime.now(pytz.utc)
+        task_instance.finished_by = user
         task_instance.persist()
 
         return task_instance, 200
