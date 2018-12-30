@@ -24,10 +24,11 @@ def set_km_to_next_instance(tasks):
     is_list = isinstance(tasks, (list,))
     if not is_list:
         tasks = [tasks]
-    latest_tour = TourModel.find_newest_tour_for_community(tasks[0].community.id)
-    for task in tasks:
-        if task.km_next_instance:
-            task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
+    if len(tasks) > 0:
+        latest_tour = TourModel.find_newest_tour_for_community(tasks[0].community.id)
+        for task in tasks:
+            if task.km_next_instance:
+                task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
 
 
 
