@@ -58,5 +58,6 @@ def configure_api(api):
     api.add_resource(task_instance_resources.FinishTaskInstances, '/tasks/instances/<int:task_instance_id>/finish')
     api.add_resource(task_instance_resources.GetOpenCommunityTaskInstances,
                      '/communities/<int:community_id>/tasks/instances/open')
+    api.add_resource(task_instance_resources.GetOpenAccountTaskInstances, '/account/tasks/instances/open')
 
     api.add_resource(hello_world_resources.HelloWorld, '/hello')

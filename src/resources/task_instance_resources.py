@@ -91,6 +91,23 @@ class GetOpenCommunityTaskInstances(Resource):
         return open_task_instances, 200
 
 
+class GetOpenAccountTaskInstances(Resource):
+
+    @jwt_required
+    @marshal_with(TaskInstanceModel.get_marshaller())
+    def get(self):
+        user = UserModel.find_by_username(get_jwt_identity())
+        all_communities = CommunityModel.return_all()
+        user_communities = [c for c in all_communities if user.id in [u.id for u in c.users]]
+
+        task_instances = []
+        for c in user_communities:
+            task_instances += TaskInstanceModel.find_by_community(c.id)
+        open_task_instances = [i for i in task_instances if i.is_open]
+
+        return open_task_instances, 200
+
+
 class FinishTaskInstances(Resource):
 
     @jwt_required

@@ -37,7 +37,7 @@ class TaskInstanceModel(db.Model):
             'task': fields.Nested(TaskModel.get_marshaller()),
             'is_open': fields.Boolean,
             'km_created_at': fields.Float,
-            'finished_by': fields.Nested(UserModel.get_marshaller())
+            'finished_by': fields.Nested(UserModel.get_marshaller(), allow_null=True)
         }
 
     @classmethod
