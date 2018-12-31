@@ -1,5 +1,5 @@
-from datetime import datetime
 from dateutil import parser
+
 
 def float_or_null(s):
     if s == '':

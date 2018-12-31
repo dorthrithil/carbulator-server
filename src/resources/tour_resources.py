@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
 from src.exceptions.no_data import NoData
-from src.messages.marshalling import SimpleMessage
+from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, \
     CANT_START_TOUR_WHEN_HAVING_UNFINISHED_TOURS_IN_COMMUNITY, TOUR_NOT_FOUND, TOUR_HAS_ALREADY_BEEN_FINISHED, \
     CANNOT_UPDATE_SENSITIVE_TOUR_DATA_WHEN_TOUR_IS_ALREADY_PAYED_FOR, \
@@ -15,6 +15,7 @@ from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, 
 from src.models.community import CommunityModel
 from src.models.tour import TourModel
 from src.models.user import UserModel
+from src.resources.task_instance_resources import create_km_triggered_task_instances
 
 parser = reqparse.RequestParser()
 parser.add_argument('start_km', help='This field cannot be blank', required=True, type=float)
@@ -69,12 +70,11 @@ class FinishTour(Resource):
         tour.end_time = datetime.datetime.now()
         tour.passengers = passengers
         tour.end_km = data['end_km']
-        print(tour.end_km)
         tour.comment = data['comment']
         tour.parking_position = data['parking_position']
         tour.persist()
-        print(tour.end_km)
 
+        create_km_triggered_task_instances(community_id, tour.end_km)
 
         return tour, 200
 
@@ -93,6 +93,9 @@ class ForceFinishTour(Resource):
             abort(404, message=TOUR_NOT_FOUND)
 
         if user.id == tour.owner.id:
+            abort(401, message=UNAUTHORIZED)
+
+        if community_id != tour.community.id:
             abort(401, message=UNAUTHORIZED)
 
         if user.id not in [u.id for u in tour.community.users]:
@@ -114,6 +117,8 @@ class ForceFinishTour(Resource):
         tour.is_force_finished = True
         tour.force_finished_by = user
         tour.persist()
+
+        create_km_triggered_task_instances(community_id, tour.end_km)
 
         return tour, 200
 

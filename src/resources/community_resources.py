@@ -2,7 +2,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
 from src.exceptions.no_data import NoData
-from src.messages.marshalling import SimpleMessage
+from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_WITH_THIS_CAR_ALREADY_EXISTS, COMMUNIY_DOESNT_EXIST, \
     COMMUNIY_DELETED, COMMUNIY_INVITATION_SENT, UNAUTHORIZED_TO_ACCEPT_COMMUNITY_INVITATION, \
     COMMUNITY_INVITATION_ALREADY_ACCEPTED, COMMUNITY_INVITATION_DOESNT_EXIST, COMMUNITY_INVITATION_ACCEPTED, \

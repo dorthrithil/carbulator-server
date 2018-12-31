@@ -30,7 +30,9 @@ env = Environment(
 )
 
 from src.models.revoked_token import RevokedTokenModel
-from src.models.tour_passenger_link import TourPassengerLinkModel # todo can be removed after it is used in some resource
+from src.models.tour_passenger_link import TourPassengerLinkModel
+
+__all__ = ['TourPassengerLinkModel']  # prevents pycharm from removing predictor as unused import
 
 
 @jwt.token_in_blacklist_loader
@@ -40,7 +42,10 @@ def check_if_token_in_blacklist(decrypted_token):
 
 
 from src.api import configure_api
+from src.util.scheduler import Scheduler
 
 configure_api(api)
 
-migrate = Migrate(app, db, compare_type=True)
+migrate = Migrate(app, db, compare_type=False)
+
+scheduler = Scheduler()

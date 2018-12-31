@@ -1,13 +1,12 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
-from src.messages.marshalling import SimpleMessage
+from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import NO_COMMUNITY_ID_GIVEN, COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, PASSWORD_CHANGED, \
     PASSWORD_TOO_SHORT, OLD_PASSWORD_INCORRECT
 from src.models.community import CommunityModel
 from src.models.community_user_link import CommunityUserLinkModel
 from src.models.user import UserModel
-from src.util.email import send_forgot_password_email
 
 parser = reqparse.RequestParser()
 parser.add_argument('username', help='This field cannot be blank', required=True, type=str)

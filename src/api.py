@@ -1,5 +1,5 @@
 from src.resources import auth_resources, car_resources, community_resources, refuel_resources, tour_resources, \
-    payoff_resources, user_resources, hello_world_resources
+    payoff_resources, user_resources, hello_world_resources, task_resources, task_instance_resources
 
 
 def configure_api(api):
@@ -48,5 +48,16 @@ def configure_api(api):
     api.add_resource(payoff_resources.SettleDebt, '/debts/<int:id>/settle')
 
     api.add_resource(payoff_resources.SinglePayoff, '/payoffs/<int:id>')
+
+    api.add_resource(task_resources.CreateTask, '/communities/<int:community_id>/tasks')
+    api.add_resource(task_resources.GetCommunityTasks, '/communities/<int:community_id>/tasks')
+    api.add_resource(task_resources.UpdateTask, '/tasks/<int:task_id>')
+    api.add_resource(task_resources.GetTask, '/tasks/<int:task_id>')
+    api.add_resource(task_resources.DeleteTask, '/tasks/<int:task_id>')
+
+    api.add_resource(task_instance_resources.FinishTaskInstances, '/tasks/instances/<int:task_instance_id>/finish')
+    api.add_resource(task_instance_resources.GetOpenCommunityTaskInstances,
+                     '/communities/<int:community_id>/tasks/instances/open')
+    api.add_resource(task_instance_resources.GetOpenAccountTaskInstances, '/account/tasks/instances/open')
 
     api.add_resource(hello_world_resources.HelloWorld, '/hello')
