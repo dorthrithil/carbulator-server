@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, abort
 
@@ -54,7 +55,7 @@ def create_time_triggered_task_instances():
 
         try:
             # If current time is higher then trigger, add a new task instance
-            now = datetime.now().replace(hour=0, minute=0, second=0)
+            now = datetime.now(pytz.timezone('Europe/Berlin')).replace(hour=0, minute=0, second=0)
             then = task.time_next_instance.replace(hour=0, minute=0, second=0)
             if now >= then:
                 # Create and persist task instance
