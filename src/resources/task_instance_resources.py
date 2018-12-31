@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 
-import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, abort
 
@@ -54,9 +53,9 @@ def create_time_triggered_task_instances():
     for task in [t for t in tasks if t.time_interval]:
 
         try:
-            # If current km are higher then trigger, add a new task instance
-            now = datetime.now(pytz.utc).replace(hour=0, minute=0, second=0)
-            then = pytz.utc.localize(task.time_next_instance.replace(hour=0, minute=0, second=0))
+            # If current time is higher then trigger, add a new task instance
+            now = datetime.now().replace(hour=0, minute=0, second=0)
+            then = task.time_next_instance.replace(hour=0, minute=0, second=0)
             if now >= then:
                 # Create and persist task instance
                 new_task_instance = TaskInstanceModel()
@@ -121,7 +120,7 @@ class FinishTaskInstances(Resource):
             abort(401, message=UNAUTHORIZED)
 
         task_instance.is_open = False
-        task_instance.time_finished = datetime.now(pytz.utc)
+        task_instance.time_finished = datetime.now()
         task_instance.finished_by = user
         task_instance.persist()
 

@@ -1,7 +1,6 @@
 from datetime import timedelta, datetime
 from typing import List
 
-import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
@@ -65,7 +64,7 @@ class CreateTask(Resource):
         if data['km_next_instance'] and data['km_next_instance'] < newest_tour.end_km:
             abort(400, message=TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM)
 
-        if data['time_next_instance'] and data['time_next_instance'] < datetime.now(pytz.utc):
+        if data['time_next_instance'] and data['time_next_instance'] < datetime.now():
             abort(400, message=TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME)
 
         time_interval = None
