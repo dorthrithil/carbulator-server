@@ -17,6 +17,7 @@ flask-cors = "*"
 flask-migrate = "*"
 gunicorn = "*"
 schedule = "*"
+geocoder = "*"
 
 [dev-packages]
 
