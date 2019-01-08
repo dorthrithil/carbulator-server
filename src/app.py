@@ -2,9 +2,10 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+from src.exception_aware_api.exception_aware_api import ExceptionAwareApi
 
 app = Flask(__name__)
 cors = CORS(app, resources={
@@ -15,7 +16,7 @@ cors = CORS(app, resources={
         ]
     }
 })
-api = Api(app, prefix='/api')
+api = ExceptionAwareApi(app, prefix='/api')
 
 app.config.from_object('src.config.default.DefaultConfig')
 app.config.from_envvar('CARBULATOR_CONFIG')

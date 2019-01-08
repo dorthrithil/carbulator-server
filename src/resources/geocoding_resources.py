@@ -11,7 +11,6 @@ class Geocode(Resource):
     @jwt_required
     @marshal_with(GeocodingResult.get_marshaller())
     def get(self, query):
-
         try:
             results = geocode(query)
             return results, 200

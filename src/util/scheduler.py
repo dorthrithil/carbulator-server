@@ -45,5 +45,8 @@ class Scheduler:
                     time.sleep(interval)
 
         continuous_thread = ScheduleThread()
+        continuous_thread.daemon = True
+
         continuous_thread.start()
+
         return cease_continuous_run
