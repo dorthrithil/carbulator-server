@@ -31,7 +31,6 @@ def set_km_to_next_instance(tasks):
                 task.km_to_next_instance = task.km_next_instance - latest_tour.end_km
 
 
-
 class CreateTask(Resource):
 
     @jwt_required

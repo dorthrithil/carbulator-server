@@ -1,6 +1,6 @@
 from src.resources import auth_resources, car_resources, community_resources, refuel_resources, tour_resources, \
     payoff_resources, user_resources, hello_world_resources, task_resources, task_instance_resources, \
-    geocoding_resources
+    geocoding_resources, event_resources
 
 
 def configure_api(api):
@@ -60,6 +60,13 @@ def configure_api(api):
     api.add_resource(task_instance_resources.GetOpenCommunityTaskInstances,
                      '/communities/<int:community_id>/tasks/instances/open')
     api.add_resource(task_instance_resources.GetOpenAccountTaskInstances, '/account/tasks/instances/open')
+
+    api.add_resource(event_resources.CreateEvent, '/communities/<int:community_id>/events')
+    api.add_resource(event_resources.GetEvents,
+                     '/communities/<int:community_id>/events/from/<from_datetime>/to/<to_datetime>')
+    api.add_resource(event_resources.EditEvent, '/events/<int:event_id>')
+    api.add_resource(event_resources.GetEvent, '/events/<int:event_id>')
+    api.add_resource(event_resources.DeleteEvent, '/events/<int:event_id>')
 
     api.add_resource(geocoding_resources.Geocode, '/geocode/<query>')
 
