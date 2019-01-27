@@ -51,4 +51,4 @@ class EventModel(db.Model):
     @classmethod
     def find_by_community(cls, community_id, from_datetime, to_datetime):
         return cls.query.filter_by(community_id=community_id). \
-            filter(EventModel.start >= from_datetime, EventModel.start <= to_datetime).all()
+            filter(EventModel.end >= from_datetime, EventModel.start <= to_datetime).all()
