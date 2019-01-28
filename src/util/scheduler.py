@@ -22,7 +22,7 @@ class Scheduler:
         """
         Checks for time triggered tasks that have to be started.
         """
-        schedule.every().day.at('00:01').do(create_time_triggered_task_instances)
+        schedule.every().day.at('18:16').do(create_time_triggered_task_instances)
 
     def run_continuously(self, interval=1):
         """Continuously run, while executing pending jobs at each elapsed
