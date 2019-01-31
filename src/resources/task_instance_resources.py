@@ -56,7 +56,8 @@ def create_time_triggered_task_instances():
         try:
             # If current time is higher then trigger, add a new task instance
             now = datetime.now(pytz.timezone('Europe/Berlin')).replace(hour=0, minute=0, second=0)
-            then = task.time_next_instance.replace(hour=0, minute=0, second=0)
+            then = task.time_next_instance.replace(hour=0, minute=0, second=0, tzinfo=pytz.timezone('Europe/Berlin'))
+
             if now >= then:
                 # Create and persist task instance
                 new_task_instance = TaskInstanceModel()
@@ -66,7 +67,7 @@ def create_time_triggered_task_instances():
                 new_task_instance.persist()
 
                 # Update time trigger and persist task
-                task.time_next_instance += task.time_interval
+                task.time_next_instance = now + task.time_interval
                 task.persist()
         except:
             # Don't fail on all just because one instance is bad
