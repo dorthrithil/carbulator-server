@@ -11,6 +11,7 @@ from src.util.parser_types import moment
 
 parser = reqparse.RequestParser()
 parser.add_argument('title', help='This field cannot be blank', required=True, type=str)
+parser.add_argument('description', type=str)
 parser.add_argument('start', help='This field cannot be blank', required=True, type=moment)
 parser.add_argument('end', help='This field cannot be blank', required=True, type=moment)
 
@@ -38,6 +39,7 @@ class CreateEvent(Resource):
         new_event = EventModel(
             owner=owner,
             title=data['title'],
+            description=data['description'],
             start=data['start'],
             end=data['end'],
             community_id=community.id
@@ -70,6 +72,7 @@ class EditEvent(Resource):
             abort(400, message=END_MUST_BE_AFTER_START)
 
         event.title = data['title']
+        event.description = data['description']
         event.start = data['start']
         event.end = data['end']
 

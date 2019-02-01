@@ -16,6 +16,7 @@ class EventModel(db.Model):
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel', foreign_keys=[community_id])
     title = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text, nullable=True)
     start = db.Column(db.DateTime(timezone=True))
     end = db.Column(db.DateTime(timezone=True))
 
@@ -31,6 +32,7 @@ class EventModel(db.Model):
             'time_updated': fields.DateTime,
             'owner': fields.Nested(UserModel.get_marshaller()),
             'title': fields.String,
+            'description': fields.String,
             'start': fields.DateTime,
             'end': fields.DateTime,
         }
