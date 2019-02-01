@@ -1,6 +1,7 @@
 import datetime
 
 import numpy as np
+import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
@@ -67,7 +68,7 @@ class FinishTour(Resource):
                 else:
                     passengers.append([u for u in community.users if u.id == passenger_id][0])
 
-        tour.end_time = datetime.datetime.now()
+        tour.end_time = datetime.datetime.now(pytz.utc)
         tour.passengers = passengers
         tour.end_km = data['end_km']
         tour.comment = data['comment']
@@ -110,7 +111,7 @@ class ForceFinishTour(Resource):
         if len(data['passengers']) != len(tour.passengers) or passengers_changed:
             abort(400, message=PASSENGER_LIST_CANNOT_BE_CHANGED_WHEN_FORCE_FINISHING_A_TOUR)
 
-        tour.end_time = datetime.datetime.now()
+        tour.end_time = datetime.datetime.now(pytz.utc)
         tour.end_km = data['end_km']
         tour.comment = data['comment']
         tour.parking_position = data['parking_position']
@@ -236,7 +237,7 @@ class AllTours(Resource):
         new_tour = TourModel(
             owner=owner,
             community=community,
-            start_time=datetime.datetime.now(),
+            start_time=datetime.datetime.now(pytz.utc),
             start_km=data['start_km'],
             passengers=passengers
         )

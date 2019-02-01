@@ -20,7 +20,7 @@ class TaskInstanceModel(db.Model):
     is_open = db.Column(db.Boolean)
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel')
-    time_finished = db.Column(db.DateTime(timezone=True), nullable=True)
+    time_finished = db.Column(db.DateTime(), nullable=True)
     finished_by = db.relationship('UserModel')
     finished_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 

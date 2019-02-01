@@ -122,7 +122,7 @@ class FinishTaskInstances(Resource):
             abort(401, message=UNAUTHORIZED)
 
         task_instance.is_open = False
-        task_instance.time_finished = datetime.now()
+        task_instance.time_finished = datetime.now(pytz.utc)
         task_instance.finished_by = user
         task_instance.persist()
 
