@@ -1,3 +1,5 @@
+import datetime
+
 from flask_restful import fields
 
 from src.app import db
@@ -13,8 +15,8 @@ class CommunityUserLinkModel(db.Model):
     invitation_accepted = db.Column(db.Boolean, default=True)
     community = db.relationship('CommunityModel')
     user = db.relationship('UserModel')
-    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
+    time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
 
     def persist(self):
         db.session.add(self)

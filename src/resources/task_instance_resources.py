@@ -55,8 +55,8 @@ def create_time_triggered_task_instances():
 
         try:
             # If current time is higher then trigger, add a new task instance
-            now = datetime.now(pytz.timezone('Europe/Berlin')).replace(hour=0, minute=0, second=0)
-            then = task.time_next_instance.replace(hour=0, minute=0, second=0, tzinfo=pytz.timezone('Europe/Berlin'))
+            now = datetime.now(pytz.utc)
+            then = task.time_next_instance.replace(tzinfo=pytz.utc)
 
             if now >= then:
                 # Create and persist task instance
@@ -122,7 +122,7 @@ class FinishTaskInstances(Resource):
             abort(401, message=UNAUTHORIZED)
 
         task_instance.is_open = False
-        task_instance.time_finished = datetime.now()
+        task_instance.time_finished = datetime.now(pytz.utc)
         task_instance.finished_by = user
         task_instance.persist()
 

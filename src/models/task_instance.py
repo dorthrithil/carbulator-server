@@ -1,3 +1,5 @@
+import datetime
+
 from flask_restful import fields
 
 from src.app import db
@@ -10,15 +12,15 @@ class TaskInstanceModel(db.Model):
     __tablename__ = 'task_instances'
 
     id = db.Column(db.Integer, primary_key=True)
-    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
+    time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'), nullable=False)
     task = db.relationship('TaskModel', foreign_keys=[task_id])
     km_created_at = db.Column(db.DECIMAL(precision=10, scale=1), nullable=True)
     is_open = db.Column(db.Boolean)
     community_id = db.Column(db.Integer, db.ForeignKey('communities.id'), nullable=False)
     community = db.relationship('CommunityModel')
-    time_finished = db.Column(db.DateTime(timezone=True), nullable=True)
+    time_finished = db.Column(db.DateTime(), nullable=True)
     finished_by = db.relationship('UserModel')
     finished_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
