@@ -1,3 +1,5 @@
+import datetime
+
 from flask_restful import fields
 
 from src.app import db
@@ -11,8 +13,8 @@ class PayoffModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     is_settled = db.Column(db.Boolean, default=False)
-    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
+    time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
     debts = db.relationship("DebtModel")
     refuels = db.relationship("RefuelModel")
     tours = db.relationship("TourModel")

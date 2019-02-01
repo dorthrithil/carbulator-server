@@ -1,3 +1,5 @@
+import datetime
+
 from flask_restful import fields
 from passlib.hash import pbkdf2_sha256 as sha256
 
@@ -11,8 +13,8 @@ class UserModel(db.Model):
     username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), nullable=False)
-    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
+    time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
     cars = db.relationship("CarModel", back_populates="owner")
     communities = db.relationship("CommunityModel", secondary='community_user_link')
     tours = db.relationship("TourModel", secondary='tour_passenger_link')

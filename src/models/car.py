@@ -1,3 +1,5 @@
+import datetime
+
 from flask_restful import fields
 
 from src.app import db
@@ -12,8 +14,8 @@ class CarModel(db.Model):
     name = db.Column(db.String(120), nullable=False)
     make = db.Column(db.String(120), nullable=False)
     model = db.Column(db.String(120), nullable=False)
-    time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-    time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
+    time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('UserModel', back_populates='cars')
 
