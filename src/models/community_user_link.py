@@ -15,8 +15,12 @@ class CommunityUserLinkModel(db.Model):
     invitation_accepted = db.Column(db.Boolean, default=True)
     community = db.relationship('CommunityModel')
     user = db.relationship('UserModel')
+    is_favourite = db.Column(db.Boolean, default=False, nullable=False)
     time_created = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
+
+    def add_to_session(self):
+        db.session.add(self)
 
     def persist(self):
         db.session.add(self)
@@ -33,6 +37,10 @@ class CommunityUserLinkModel(db.Model):
     @classmethod
     def find_by_user_and_community(cls, user_id, community_id):
         return cls.query.filter_by(user_id=user_id, community_id=community_id).first()
+
+    @classmethod
+    def find_by_user(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).all()
 
     @classmethod
     def find_by_community(cls, community_id):
