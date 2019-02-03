@@ -39,6 +39,10 @@ class CommunityUserLinkModel(db.Model):
         return cls.query.filter_by(user_id=user_id, community_id=community_id).first()
 
     @classmethod
+    def find_favourite_by_user(cls, user_id):
+        return cls.query.filter_by(user_id=user_id, is_favourite=True).first()
+
+    @classmethod
     def find_by_user(cls, user_id):
         return cls.query.filter_by(user_id=user_id).all()
 

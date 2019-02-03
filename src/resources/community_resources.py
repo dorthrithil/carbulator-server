@@ -9,7 +9,7 @@ from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_WITH_THIS_CAR_
     COMMUNITY_INVITATION_ALREADY_ACCEPTED, COMMUNITY_INVITATION_DOESNT_EXIST, COMMUNITY_INVITATION_ACCEPTED, \
     CAR_DOESNT_EXIST, USER_DOESNT_EXIST, USER_ALREADY_INVITED, NOT_AUTHORIZED_TO_REMOVE_USER_FROM_COMMUNITY, \
     COMMUNIY_LEFT_SUCCESSFULLY, COMMUNITY_INVITATION_DECLINED, UNAUTHORIZED, CANNOT_CREATE_COMMUNITY_WITH_FOREIGN_CAR, \
-    COMMUNIY_LEFT_AND_DELETED, COMMUNITY_MARKED_AS_FAVOURITE
+    COMMUNIY_LEFT_AND_DELETED, COMMUNITY_MARKED_AS_FAVOURITE, NO_FAVOURITE_COMMUNIY_FOUND
 from src.models.car import CarModel
 from src.models.community import CommunityModel
 from src.models.community_user_link import CommunityUserLinkModel
@@ -287,3 +287,17 @@ class MarkCommunityAsFavourite(Resource):
             return SimpleMessage(COMMUNITY_MARKED_AS_FAVOURITE), 200
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
+
+
+class FavouriteCommunity(Resource):
+
+    @jwt_required
+    @marshal_with(CommunityModel.get_marshaller())
+    def get(self):
+        user = UserModel.find_by_username(get_jwt_identity())
+        cul = CommunityUserLinkModel.find_favourite_by_user(user.id)
+
+        if not cul:
+            abort(404, message=NO_FAVOURITE_COMMUNIY_FOUND)
+
+        return cul.community, 200
