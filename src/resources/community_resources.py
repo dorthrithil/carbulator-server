@@ -1,6 +1,7 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
+from src.app import db
 from src.exceptions.no_data import NoData
 from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_WITH_THIS_CAR_ALREADY_EXISTS, COMMUNIY_DOESNT_EXIST, \
@@ -8,7 +9,7 @@ from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_WITH_THIS_CAR_
     COMMUNITY_INVITATION_ALREADY_ACCEPTED, COMMUNITY_INVITATION_DOESNT_EXIST, COMMUNITY_INVITATION_ACCEPTED, \
     CAR_DOESNT_EXIST, USER_DOESNT_EXIST, USER_ALREADY_INVITED, NOT_AUTHORIZED_TO_REMOVE_USER_FROM_COMMUNITY, \
     COMMUNIY_LEFT_SUCCESSFULLY, COMMUNITY_INVITATION_DECLINED, UNAUTHORIZED, CANNOT_CREATE_COMMUNITY_WITH_FOREIGN_CAR, \
-    COMMUNIY_LEFT_AND_DELETED
+    COMMUNIY_LEFT_AND_DELETED, COMMUNITY_MARKED_AS_FAVOURITE, NO_FAVOURITE_COMMUNITY_FOUND
 from src.models.car import CarModel
 from src.models.community import CommunityModel
 from src.models.community_user_link import CommunityUserLinkModel
@@ -228,12 +229,15 @@ class AllCommunities(Resource):
 class UserCommunities(Resource):
 
     @jwt_required
-    @marshal_with(CommunityModel.get_detailed_marshaller())
+    @marshal_with(CommunityModel.add_is_fav_to_marshaller(CommunityModel.get_detailed_marshaller()))
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
 
-        all_communities = CommunityModel.return_all()
-        user_communities = [c for c in all_communities if user.id in [u.id for u in c.users]]
+        community_user_links = CommunityUserLinkModel.find_by_user(user.id)
+        for cul in community_user_links:
+            cul.community.is_favourite = cul.is_favourite
+
+        user_communities = [c.community for c in community_user_links]
 
         for c in user_communities:
             is_owner = CommunityUserLinkModel.find_by_user_and_community(user.id, c.id).is_owner
@@ -255,3 +259,45 @@ class CommunityUsers(Resource):
             abort(401, message=UNAUTHORIZED)
 
         return community.users, 200
+
+
+class MarkCommunityAsFavourite(Resource):
+
+    @jwt_required
+    @marshal_with(SimpleMessage.get_marshaller())
+    def put(self, community_id):
+        user = UserModel.find_by_username(get_jwt_identity())
+        community_user_links = CommunityUserLinkModel.find_by_user(user.id)
+
+        faved_community_cul = next((cul for cul in community_user_links if cul.community.id == community_id), None)
+
+        if not faved_community_cul:
+            abort(404, message=COMMUNIY_DOESNT_EXIST)
+
+        if user not in faved_community_cul.community.users:
+            abort(401, message=UNAUTHORIZED)
+
+        try:
+            for cul in community_user_links:
+                cul.is_favourite = False
+                cul.add_to_session()
+            faved_community_cul.is_favourite = True
+            faved_community_cul.add_to_session()
+            db.session.commit()
+            return SimpleMessage(COMMUNITY_MARKED_AS_FAVOURITE), 200
+        except:
+            abort(500, message=INTERNAL_SERVER_ERROR)
+
+
+class FavouriteCommunity(Resource):
+
+    @jwt_required
+    @marshal_with(CommunityModel.get_marshaller())
+    def get(self):
+        user = UserModel.find_by_username(get_jwt_identity())
+        cul = CommunityUserLinkModel.find_favourite_by_user(user.id)
+
+        if not cul:
+            abort(404, message=NO_FAVOURITE_COMMUNITY_FOUND)
+
+        return cul.community, 200

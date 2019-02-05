@@ -20,6 +20,7 @@ class CommunityModel(db.Model):
                                           'CommunityUserLinkModel.invitation_accepted == True)')
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'), unique=True)
     car = db.relationship("CarModel", backref=db.backref("community", uselist=False))
+    is_favourite = None
 
     def persist(self):
         db.session.add(self)
@@ -48,6 +49,11 @@ class CommunityModel(db.Model):
             'is_deletable': fields.Boolean,
             'is_editable': fields.Boolean
         }
+
+    @staticmethod
+    def add_is_fav_to_marshaller(marshaller):
+        marshaller['is_favourite'] = fields.Boolean
+        return marshaller
 
     @classmethod
     def find_by_car_id(cls, id):

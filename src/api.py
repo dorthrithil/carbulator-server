@@ -27,6 +27,8 @@ def configure_api(api):
     api.add_resource(community_resources.OpenCommunityInvitationsForUser, '/account/invitations')
     api.add_resource(community_resources.AllCommunityInvitations, '/communities/invitations')
     api.add_resource(community_resources.InvitedUsers, '/communities/<int:community_id>/users/invited')
+    api.add_resource(community_resources.MarkCommunityAsFavourite, '/communities/<int:community_id>/mark-as-favourite')
+    api.add_resource(community_resources.FavouriteCommunity, '/account/communities/favourite')
 
     api.add_resource(refuel_resources.AllRefuels, '/communities/<int:community_id>/refuels')
     api.add_resource(refuel_resources.SingleRefuel, '/communities/<int:community_id>/refuels/<int:id>')
