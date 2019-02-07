@@ -8,9 +8,10 @@ from flask_restful import Resource, marshal_with, reqparse, abort
 from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED, \
     INTERNAL_SERVER_ERROR, TASK_DOESNT_EXIST, TASK_DELETED, TASK_KM_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_KM, \
-    TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME
+    TASK_TIME_NEXT_INSTANCE_MUST_BE_HIGHER_THEN_CURRENT_TIME, NON_REOCURRENT_TASKS_CANNOT_BE_UPDATED
 from src.models.community import CommunityModel
 from src.models.task import TaskModel
+from src.models.task_instance import TaskInstanceModel
 from src.models.tour import TourModel
 from src.models.user import UserModel
 from src.util.parser_types import moment
@@ -43,6 +44,7 @@ class CreateTask(Resource):
         parser.add_argument('description', type=str)
         parser.add_argument('km_interval', type=int, required=False)
         parser.add_argument('km_next_instance', type=float, required=False)
+        parser.add_argument('is_reocurrent', type=bool, required=True)
         data = parser.parse_args()
 
         owner = UserModel.find_by_username(get_jwt_identity())
@@ -55,9 +57,10 @@ class CreateTask(Resource):
         if owner.id not in community_member_ids:
             abort(401, message=UNAUTHORIZED)
 
-        if not (data['time_next_instance'] and data['time_interval'] or data['km_interval'] and data[
+        if data['is_reocurrent'] and (
+                not (data['time_next_instance'] and data['time_interval'] or data['km_interval'] and data[
             'km_next_instance']) or data['km_interval'] and (data['time_interval'] or data['time_next_instance']) or \
-                data['time_interval'] and (data['km_interval'] or data['km_next_instance']):
+                data['time_interval'] and (data['km_interval'] or data['km_next_instance'])):
             abort(400, message=TASK_MUST_BE_EITHER_TIME_OR_KM_TRIGGERED)
 
         newest_tour: TourModel = TourModel.find_newest_tour_for_community(community_id)
@@ -80,11 +83,21 @@ class CreateTask(Resource):
             km_next_instance=data['km_next_instance'],
             name=data['name'],
             description=data['description'],
+            is_reocurrent=data['is_reocurrent']
         )
 
         try:
             new_task.persist()
             set_km_to_next_instance(new_task)
+
+            if not data['is_reocurrent']:
+                new_task_instance = TaskInstanceModel(
+                    task=new_task,
+                    is_open=True,
+                    community=new_task.community
+                )
+                new_task_instance.persist()
+
             return new_task, 201
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
@@ -108,6 +121,9 @@ class UpdateTask(Resource):
 
         if not task:
             abort(404, message=TASK_DOESNT_EXIST)
+
+        if not task.is_reocurrent:
+            abort(401, message=NON_REOCURRENT_TASKS_CANNOT_BE_UPDATED)
 
         community_member_ids = [m.id for m in task.community.users]
         user = UserModel.find_by_username(get_jwt_identity())
