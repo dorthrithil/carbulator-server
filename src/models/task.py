@@ -26,6 +26,7 @@ class TaskModel(db.Model):
     name = db.Column(db.String(120))
     description = db.Column(db.String(120))
     instances = db.relationship("TaskInstanceModel", cascade="all, delete")
+    is_reocurrent = db.Column(db.Boolean, nullable=False, default=True)
 
     def persist(self):
         db.session.add(self)
@@ -45,7 +46,8 @@ class TaskModel(db.Model):
             'description': fields.String,
             'km_interval': fields.Integer,
             'km_next_instance': fields.Float,
-            'km_to_next_instance': fields.Float
+            'km_to_next_instance': fields.Float,
+            'is_reocurrent': fields.Boolean
         }
 
     @classmethod
@@ -59,14 +61,19 @@ class TaskModel(db.Model):
 
     @classmethod
     def find_by_id(cls, task_id):
-        return cls.query.filter_by(id=task_id).first()
+        return cls.query \
+            .filter_by(id=task_id) \
+            .first()
 
     @classmethod
     def return_all(cls):
-        return cls.query.all()
+        return cls.query \
+            .filter_by(is_reocurrent=True) \
+            .all()
 
     @classmethod
     def find_by_community(cls, community_id):
         return cls.query \
             .filter_by(community_id=community_id) \
+            .filter_by(is_reocurrent=True) \
             .all()
