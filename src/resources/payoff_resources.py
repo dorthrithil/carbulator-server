@@ -214,3 +214,30 @@ class SettleDebt(Resource):
             payoff.persist()
 
         return debt, 200
+
+
+class UnsettleDebt(Resource):
+
+    @jwt_required
+    @marshal_with(DebtModel.get_marshaller())
+    def put(self, id):
+        user = UserModel.find_by_username(get_jwt_identity())
+        debt = DebtModel.find_by_id(id)
+
+        if not debt:
+            abort(404, message=DEBT_DOESNT_EXIST)
+
+        debt = DebtModel.find_by_id(id)
+
+        if not (debt.recepient.id == user.id or debt.debtee.id == user.id):
+            abort(401, message=UNAUTHORIZED)
+
+        debt.is_settled = False
+        debt.persist()
+
+        payoff = PayoffModel.find_by_id(debt.payoff_id)
+        if payoff.is_settled:
+            payoff.is_settled = False
+            payoff.persist()
+
+        return debt, 200
