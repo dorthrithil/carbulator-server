@@ -37,6 +37,7 @@ class RefuelModel(db.Model):
             'time_created': fields.DateTime,
             'time_updated': fields.DateTime,
             'is_open': fields.Boolean,
+            'community_id': fields.Integer,
             'owner': fields.Nested(UserModel.get_marshaller())
         }
 
