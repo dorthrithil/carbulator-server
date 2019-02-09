@@ -10,7 +10,7 @@ from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, \
     CANT_START_TOUR_WHEN_HAVING_UNFINISHED_TOURS_IN_COMMUNITY, TOUR_NOT_FOUND, TOUR_HAS_ALREADY_BEEN_FINISHED, \
     CANNOT_UPDATE_SENSITIVE_TOUR_DATA_WHEN_TOUR_IS_ALREADY_PAYED_FOR, \
-    CANNOT_DELETE_TOUR_WHEN_A_NEW_TOUR_HAS_ALREADY_STARTED, TOUR_DELETED, \
+    TOUR_DELETED, \
     NO_TOUR_EXISTING, PASSENGERS_MUST_BE_COMMUNITY_MEMBERS, \
     PASSENGER_LIST_CANNOT_BE_CHANGED_WHEN_FORCE_FINISHING_A_TOUR, END_KM_MUST_BE_GREATER_START_KM
 from src.models.community import CommunityModel
@@ -178,11 +178,6 @@ class SingleTour(Resource):
 
         if not user.id == tour.owner.id:
             abort(401, message=UNAUTHORIZED)
-
-        running_tours = TourModel.find_running_by_community(community_id)
-
-        if running_tours and (len(running_tours) > 1 or running_tours[0].id != id):
-            abort(400, message=CANNOT_DELETE_TOUR_WHEN_A_NEW_TOUR_HAS_ALREADY_STARTED)
 
         try:
             TourModel.delete_by_id(id)

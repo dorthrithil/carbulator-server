@@ -4,7 +4,7 @@ from flask_restful import Resource, marshal_with, reqparse, abort
 from src.exceptions.no_data import NoData
 from src.messages.marshalling_objects import SimpleMessage
 from src.messages.messages import INTERNAL_SERVER_ERROR, COMMUNIY_DOESNT_EXIST, UNAUTHORIZED, REFUEL_DELETED, \
-    REFUEL_DOESNT_EXIST, CANT_CHANGE_REFUEL_COMMUNITY
+    REFUEL_DOESNT_EXIST, CANT_CHANGE_REFUEL_COMMUNITY, CANNOT_DELETE_A_REFUEL_THAT_IS_PART_OF_A_PAYOFF
 from src.models.community import CommunityModel
 from src.models.refuel import RefuelModel
 from src.models.user import UserModel
@@ -68,6 +68,9 @@ class SingleRefuel(Resource):
 
         if not user.id == refuel.owner.id:
             abort(401, message=UNAUTHORIZED)
+
+        if not refuel.is_open:
+            abort(401, message=CANNOT_DELETE_A_REFUEL_THAT_IS_PART_OF_A_PAYOFF)
 
         try:
             RefuelModel.delete_by_id(id)

@@ -49,6 +49,7 @@ def configure_api(api):
     api.add_resource(payoff_resources.CommunityDebts, '/communities/<int:id>/debts/open')
     api.add_resource(payoff_resources.UserDebts, '/account/debts/open')
     api.add_resource(payoff_resources.SettleDebt, '/debts/<int:id>/settle')
+    api.add_resource(payoff_resources.UnsettleDebt, '/debts/<int:id>/unsettle')
 
     api.add_resource(payoff_resources.SinglePayoff, '/payoffs/<int:id>')
 
