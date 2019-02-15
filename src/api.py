@@ -1,6 +1,6 @@
 from src.resources import auth_resources, car_resources, community_resources, refuel_resources, tour_resources, \
     payoff_resources, user_resources, hello_world_resources, task_resources, task_instance_resources, \
-    geocoding_resources, event_resources
+    geocoding_resources, event_resources, account_settings_resources
 
 
 def configure_api(api):
@@ -11,6 +11,9 @@ def configure_api(api):
     api.add_resource(auth_resources.TokenRefresh, '/token/refresh')
     api.add_resource(auth_resources.ForgotPassword, '/forgot-password')
     api.add_resource(auth_resources.ResetPassword, '/reset-password')
+
+    api.add_resource(account_settings_resources.GetAccountSettings, '/account/settings')
+    api.add_resource(account_settings_resources.UpdateAccountSettings, '/account/settings')
 
     api.add_resource(user_resources.AllUsers, '/users')
     api.add_resource(user_resources.UserSearch, '/users/search')
