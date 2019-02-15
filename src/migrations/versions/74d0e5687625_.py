@@ -44,7 +44,9 @@ def upgrade():
     for u in users_result:
         date = datetime.datetime.utcnow()
         op.get_bind().execute(
-            account_settings.insert().values(user_id=u[0], time_created=date.strftime('%Y-%m-%d %H:%M:%S'))
+            account_settings.insert().values(user_id=u[0],
+                                             auto_load_parking_place_gps_location=0,
+                                             time_created=date.strftime('%Y-%m-%d %H:%M:%S'))
         )
 
     # ### end Alembic commands ###

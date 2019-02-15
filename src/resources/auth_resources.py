@@ -11,6 +11,7 @@ from src.messages.messages import USER_ALREADY_EXISTS, USER_CREATION_SUCCESS, IN
     USER_DOESNT_EXIST, WRONG_CREDENTIALS, ACCESS_TOKEN_REVOKED, REFRESH_TOKEN_REVOKED, USERNAME_TOO_SHORT, \
     USERNAME_INVALID, PASSWORD_TOO_SHORT, EMAIL_INVALID, USER_NOT_FOUND, RESET_PASSWORD_MAIL_SENT, \
     RESET_PASSWORD_HASH_INVALID, PASSWORD_RESET
+from src.models.acount_settings import AccountSettingsModel
 from src.models.revoked_token import RevokedTokenModel
 from src.models.user import UserModel
 from src.util.email import send_forgot_password_email
@@ -47,8 +48,12 @@ class UserRegistration(Resource):
             email=data['email']
         )
 
+        new_account_settings = AccountSettingsModel()
+
         try:
             new_user.persist()
+            new_account_settings.user_id = new_user.id
+            new_account_settings.persist()
             access_token = create_access_token(identity=data['username'])
             refresh_token = create_refresh_token(identity=data['username'])
             return AuthResponse(

@@ -30,7 +30,3 @@ class AccountSettingsModel(db.Model):
     @classmethod
     def find_by_user_id(cls, user_id):
         return cls.query.filter_by(user_id=user_id).first()
-
-# todo test creation of user -> settings must be created
-# todo test deletion fo user -> cascading?
-# todo migration script with default settings for existing users
