@@ -46,7 +46,7 @@ def configure_api(api):
     api.add_resource(tour_resources.CommunityTours, '/communities/<int:community_id>/tours')
     api.add_resource(tour_resources.RunningCommunityTours, '/communities/<int:community_id>/tours/running')
     api.add_resource(tour_resources.UserTours, '/account/tours/')
-    api.add_resource(tour_resources.RunningUserTours, '/account/tours/running/')
+    api.add_resource(tour_resources.RunningUserTours, '/account/tours/running')
 
     api.add_resource(payoff_resources.AllPayoffs, '/communities/<int:id>/payoffs')
     api.add_resource(payoff_resources.CommunityDebts, '/communities/<int:id>/debts/open')
