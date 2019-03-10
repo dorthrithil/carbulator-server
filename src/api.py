@@ -1,6 +1,6 @@
 from src.resources import auth_resources, car_resources, community_resources, refuel_resources, tour_resources, \
     payoff_resources, user_resources, hello_world_resources, task_resources, task_instance_resources, \
-    geocoding_resources, event_resources, account_settings_resources
+    geocoding_resources, event_resources, account_settings_resources, statistics_resources
 
 
 def configure_api(api):
@@ -32,6 +32,9 @@ def configure_api(api):
     api.add_resource(community_resources.InvitedUsers, '/communities/<int:community_id>/users/invited')
     api.add_resource(community_resources.MarkCommunityAsFavourite, '/communities/<int:community_id>/mark-as-favourite')
     api.add_resource(community_resources.FavouriteCommunity, '/account/communities/favourite')
+
+    api.add_resource(statistics_resources.GetCommunityStatistic,
+                     '/communities/<int:community_id>/statistics/from/<from_datetime>/to/<to_datetime>')
 
     api.add_resource(refuel_resources.AllRefuels, '/communities/<int:community_id>/refuels')
     api.add_resource(refuel_resources.SingleRefuel, '/communities/<int:community_id>/refuels/<int:id>')
