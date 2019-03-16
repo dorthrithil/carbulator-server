@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, abort
 
 from src.messages.messages import UNAUTHORIZED, CANT_CREATE_PAYOFF_WHEN_UNFINISHED_TOURS_EXIST, \
-    CANT_CREATE_PAYOFF_WITHOUT_REFUELS_AND_TOURS, COMMUNIY_DOESNT_EXIST, PAYOFF_DOESNT_EXIST, DEBT_DOESNT_EXIST
+    CANT_CREATE_PAYOFF_WITHOUT_NEW_REFUELS_AND_TOURS, COMMUNIY_DOESNT_EXIST, PAYOFF_DOESNT_EXIST, DEBT_DOESNT_EXIST
 from src.models.community import CommunityModel
 from src.models.debt import DebtModel
 from src.models.payoff import PayoffModel
@@ -33,11 +33,13 @@ class AllPayoffs(Resource):
         if TourModel.find_running_by_community(id):
             abort(400, message=CANT_CREATE_PAYOFF_WHEN_UNFINISHED_TOURS_EXIST)
 
-        tours: List[TourModel] = TourModel.find_finished_and_open_by_community(id)
-        refuels: List[RefuelModel] = RefuelModel.find_open_by_community(id)
+        # tours: List[TourModel] = TourModel.find_finished_and_open_by_community(id)
+        # refuels: List[RefuelModel] = RefuelModel.find_open_by_community(id)
+        tours: List[TourModel] = TourModel.find_finished_by_community(id)
+        refuels: List[RefuelModel] = RefuelModel.find_by_community(id)
 
-        if not tours or not refuels:
-            abort(400, message=CANT_CREATE_PAYOFF_WITHOUT_REFUELS_AND_TOURS)
+        if not [t for t in tours if t.is_open] and not [r for r in refuels if r.is_open]:
+            abort(400, message=CANT_CREATE_PAYOFF_WITHOUT_NEW_REFUELS_AND_TOURS)
 
         # Calculate some basic statistics
         total_km = sum(map(lambda t: t.end_km - t.start_km, tours))
@@ -79,6 +81,13 @@ class AllPayoffs(Resource):
                     debt_amount = refuel.costs * km_fraction_per_user[user_id]
                     debt_matrix[debtee_position, recipient_position] += float(debt_amount)
 
+        # Include already created debts from previous payoffs
+        debts = DebtModel.find_by_community(id)
+        for debt in debts:
+            recipient_position = list(user_dictionary.keys()).index(debt.recepient_id)
+            debtee_position = list(user_dictionary.keys()).index(debt.debtee_id)
+            debt_matrix[debtee_position, recipient_position] -= float(debt.amount)
+
         # Simplify debt matrix
         debt_matrix = simplify_debt_matrix(debt_matrix)
 
@@ -103,17 +112,19 @@ class AllPayoffs(Resource):
         if not np.any(debt_matrix != 0):
             payoff.is_settled = True
 
-        # Set tours to non open and add payoff id
+        # Set open tours to non open and add payoff id
         for tour in tours:
-            tour.is_open = False
-            tour.payoff_id = payoff.id
-            tour.persist()
+            if tour.is_open:
+                tour.is_open = False
+                tour.payoff_id = payoff.id
+                tour.persist()
 
-        # Set refuels to non open and add payoff id
+        # Set open refuels to non open and add payoff id
         for refuel in refuels:
-            refuel.is_open = False
-            refuel.payoff_id = payoff.id
-            refuel.persist()
+            if refuel.is_open:
+                refuel.is_open = False
+                refuel.payoff_id = payoff.id
+                refuel.persist()
 
         return payoff, 201
 

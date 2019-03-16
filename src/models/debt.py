@@ -42,6 +42,10 @@ class DebtModel(db.Model):
         return cls.query.filter_by(id=id).first()
 
     @classmethod
+    def find_by_community(cls, community_id):
+        return cls.query.filter_by(community_id=community_id).all()
+
+    @classmethod
     def find_unsettled_by_community(cls, community_id):
         return cls.query.filter_by(community_id=community_id, is_settled=False).all()
 
