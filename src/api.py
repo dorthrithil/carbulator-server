@@ -1,6 +1,6 @@
 from src.resources import auth_resources, car_resources, community_resources, refuel_resources, tour_resources, \
     payoff_resources, user_resources, hello_world_resources, task_resources, task_instance_resources, \
-    geocoding_resources, event_resources
+    geocoding_resources, event_resources, account_settings_resources, statistics_resources
 
 
 def configure_api(api):
@@ -11,6 +11,9 @@ def configure_api(api):
     api.add_resource(auth_resources.TokenRefresh, '/token/refresh')
     api.add_resource(auth_resources.ForgotPassword, '/forgot-password')
     api.add_resource(auth_resources.ResetPassword, '/reset-password')
+
+    api.add_resource(account_settings_resources.GetAccountSettings, '/account/settings')
+    api.add_resource(account_settings_resources.UpdateAccountSettings, '/account/settings')
 
     api.add_resource(user_resources.AllUsers, '/users')
     api.add_resource(user_resources.UserSearch, '/users/search')
@@ -30,6 +33,11 @@ def configure_api(api):
     api.add_resource(community_resources.MarkCommunityAsFavourite, '/communities/<int:community_id>/mark-as-favourite')
     api.add_resource(community_resources.FavouriteCommunity, '/account/communities/favourite')
 
+    api.add_resource(statistics_resources.GetCommunityStatistic,
+                     '/communities/<int:community_id>/statistics/from/<from_datetime>/to/<to_datetime>')
+    api.add_resource(statistics_resources.GetCommunityStatisticCurrentPayoffIntervall,
+                     '/communities/<int:community_id>/statistics/current-payoff-intervall')
+
     api.add_resource(refuel_resources.AllRefuels, '/communities/<int:community_id>/refuels')
     api.add_resource(refuel_resources.SingleRefuel, '/communities/<int:community_id>/refuels/<int:id>')
     api.add_resource(refuel_resources.UserRefuels, '/account/refuels')
@@ -43,7 +51,7 @@ def configure_api(api):
     api.add_resource(tour_resources.CommunityTours, '/communities/<int:community_id>/tours')
     api.add_resource(tour_resources.RunningCommunityTours, '/communities/<int:community_id>/tours/running')
     api.add_resource(tour_resources.UserTours, '/account/tours/')
-    api.add_resource(tour_resources.RunningUserTours, '/account/tours/running/')
+    api.add_resource(tour_resources.RunningUserTours, '/account/tours/running')
 
     api.add_resource(payoff_resources.AllPayoffs, '/communities/<int:id>/payoffs')
     api.add_resource(payoff_resources.CommunityDebts, '/communities/<int:id>/debts/open')

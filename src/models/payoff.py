@@ -1,6 +1,7 @@
 import datetime
 
 from flask_restful import fields
+from sqlalchemy import desc
 
 from src.app import db
 from src.models.debt import DebtModel
@@ -43,3 +44,7 @@ class PayoffModel(db.Model):
     @classmethod
     def find_by_community(cls, community_id):
         return cls.query.filter_by(community_id=community_id).all()
+
+    @classmethod
+    def find_latest_by_community(cls, community_id):
+        return cls.query.filter_by(community_id=community_id).order_by(desc(PayoffModel.time_created)).first()
