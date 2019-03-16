@@ -237,7 +237,7 @@ class UserCommunities(Resource):
         for cul in community_user_links:
             cul.community.is_favourite = cul.is_favourite
 
-        user_communities = [c.community for c in community_user_links]
+        user_communities = [c.community for c in community_user_links if c.invitation_accepted]
 
         for c in user_communities:
             is_owner = CommunityUserLinkModel.find_by_user_and_community(user.id, c.id).is_owner
