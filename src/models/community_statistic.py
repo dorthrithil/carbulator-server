@@ -10,12 +10,14 @@ from src.models.user import UserModel
 class KmPerUserModel:
     user: UserModel
     km: float = 0
+    km_accounted_for_passengers: float = 0
 
     @staticmethod
     def get_marshaller():
         return {
             'user': fields.Nested(UserModel.get_marshaller()),
-            'km': fields.Float
+            'km': fields.Float,
+            'km_accounted_for_passengers': fields.Float
         }
 
 

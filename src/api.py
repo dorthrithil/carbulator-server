@@ -35,6 +35,8 @@ def configure_api(api):
 
     api.add_resource(statistics_resources.GetCommunityStatistic,
                      '/communities/<int:community_id>/statistics/from/<from_datetime>/to/<to_datetime>')
+    api.add_resource(statistics_resources.GetCommunityStatisticCurrentPayoffIntervall,
+                     '/communities/<int:community_id>/statistics/current-payoff-intervall')
 
     api.add_resource(refuel_resources.AllRefuels, '/communities/<int:community_id>/refuels')
     api.add_resource(refuel_resources.SingleRefuel, '/communities/<int:community_id>/refuels/<int:id>')
