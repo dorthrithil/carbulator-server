@@ -13,6 +13,7 @@ class AccountSettingsModel(db.Model):
     time_updated = db.Column(db.DateTime(), onupdate=datetime.datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     auto_load_parking_place_gps_location = db.Column(db.Boolean, default=False)
+    parking_place_required = db.Column(db.Boolean, default=False)
 
     def persist(self):
         db.session.add(self)
@@ -24,7 +25,8 @@ class AccountSettingsModel(db.Model):
             'id': fields.Integer,
             'time_created': fields.DateTime,
             'time_updated': fields.DateTime,
-            'auto_load_parking_place_gps_location': fields.Boolean
+            'auto_load_parking_place_gps_location': fields.Boolean,
+            'parking_place_required': fields.Boolean
         }
 
     @classmethod
