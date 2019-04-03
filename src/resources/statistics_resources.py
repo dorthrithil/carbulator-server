@@ -6,8 +6,9 @@ from flask_restful import Resource, marshal_with, abort
 
 from src.messages.messages import COMMUNIY_DOESNT_EXIST, UNAUTHORIZED
 from src.models.community import CommunityModel
-from src.models.community_statistic import CommunityStatisticModel, KmPerUserModel
+from src.models.community_statistic import CommunityStatisticModel, KmPerUserModel, CostsPerUserModel
 from src.models.payoff import PayoffModel
+from src.models.refuel import RefuelModel
 from src.models.tour import TourModel
 from src.models.user import UserModel
 from src.util.parser_types import moment
@@ -31,11 +32,16 @@ def get_community_statistic(community_id, from_datetime, to_datetime):
     statistic.statistic_end = to_datetime
 
     all_tours = TourModel.find_finished_by_community(community_id)
+    all_costs = RefuelModel.find_by_community(community_id)
     km_per_user_dict = {}
+    costs_per_user_dict = {}
     for user in community.users:
         km_per_user_dict[user.id] = KmPerUserModel()
         km_per_user_dict[user.id].user = user
         statistic.km_per_user.append(km_per_user_dict[user.id])
+        costs_per_user_dict[user.id] = CostsPerUserModel()
+        costs_per_user_dict[user.id].user = user
+        statistic.costs_per_user.append(costs_per_user_dict[user.id])
     for tour in all_tours:
         if from_datetime <= tour.end_time.astimezone(pytz.utc) <= to_datetime:
             tour_km = tour.end_km - tour.start_km
@@ -44,6 +50,9 @@ def get_community_statistic(community_id, from_datetime, to_datetime):
             all_passengers_ids = [tour.owner_id] + [passenger.id for passenger in tour.passengers]
             for passenger_id in all_passengers_ids:
                 km_per_user_dict[passenger_id].km_accounted_for_passengers += tour_km / len(all_passengers_ids)
+    for cost in all_costs:
+        if from_datetime <= cost.time_created.astimezone(pytz.utc) <= to_datetime:
+            costs_per_user_dict[cost.owner_id].costs += cost.costs
 
     return statistic
 
