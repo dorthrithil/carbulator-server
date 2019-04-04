@@ -60,4 +60,4 @@ class EventModel(db.Model):
     @classmethod
     def find_next_n_by_community(cls, community_id, n):
         return cls.query.filter_by(community_id=community_id). \
-            filter(EventModel.end >= datetime.datetime.utcnow()).limit(n).all()
+            filter(EventModel.end >= datetime.datetime.utcnow()).order_by(EventModel.start.asc()).limit(n).all()
