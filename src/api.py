@@ -75,6 +75,8 @@ def configure_api(api):
     api.add_resource(event_resources.CreateEvent, '/communities/<int:community_id>/events')
     api.add_resource(event_resources.GetEvents,
                      '/communities/<int:community_id>/events/from/<from_datetime>/to/<to_datetime>')
+    api.add_resource(event_resources.GetNextEvents,
+                     '/communities/<int:community_id>/events/next/<int:number_of_events>')
     api.add_resource(event_resources.EditEvent, '/events/<int:event_id>')
     api.add_resource(event_resources.GetEvent, '/events/<int:event_id>')
     api.add_resource(event_resources.DeleteEvent, '/events/<int:event_id>')

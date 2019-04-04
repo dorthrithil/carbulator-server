@@ -130,6 +130,27 @@ class GetEvents(Resource):
         return events, 200
 
 
+class GetNextEvents(Resource):
+
+    @jwt_required
+    @marshal_with(EventModel.get_marshaller())
+    def get(self, community_id, number_of_events):
+
+        owner = UserModel.find_by_username(get_jwt_identity())
+        community: CommunityModel = CommunityModel.find_by_id(community_id)
+        community_member_ids = [m.id for m in community.users]
+
+        if not community:
+            abort(400, message=COMMUNIY_DOESNT_EXIST)
+
+        if owner.id not in community_member_ids:
+            abort(401, message=UNAUTHORIZED)
+
+        events: EventModel = EventModel.find_next_n_by_community(community_id, number_of_events)
+
+        return events, 200
+
+
 class DeleteEvent(Resource):
 
     @jwt_required

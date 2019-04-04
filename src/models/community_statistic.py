@@ -21,14 +21,28 @@ class KmPerUserModel:
         }
 
 
+class CostsPerUserModel:
+    user: UserModel
+    costs: float = 0
+
+    @staticmethod
+    def get_marshaller():
+        return {
+            'user': fields.Nested(UserModel.get_marshaller()),
+            'costs': fields.Float,
+        }
+
+
 class CommunityStatisticModel:
     community: CommunityModel
     statistic_start: datetime
     statistic_end: datetime
     km_per_user: List[KmPerUserModel] = []
+    costs_per_user: List[CostsPerUserModel] = []
 
     def __init__(self):
         self.km_per_user = []
+        self.costs_per_user = []
 
     @staticmethod
     def get_marshaller():
@@ -36,5 +50,6 @@ class CommunityStatisticModel:
             'community': fields.Nested(CommunityModel.get_marshaller()),
             'statistic_start': fields.DateTime,
             'statistic_end': fields.DateTime,
-            'km_per_user': fields.Nested(KmPerUserModel.get_marshaller())
+            'km_per_user': fields.Nested(KmPerUserModel.get_marshaller()),
+            'costs_per_user': fields.Nested(CostsPerUserModel.get_marshaller())
         }
