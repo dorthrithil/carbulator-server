@@ -1,3 +1,5 @@
+from typing import List
+
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, reqparse, abort
 
@@ -25,6 +27,15 @@ put_parser.add_argument('name', help='This field cannot be blank', required=True
 invitation_parser = reqparse.RequestParser()
 invitation_parser.add_argument('community', help='This field cannot be blank', required=True, type=int)
 invitation_parser.add_argument('user', help='This field cannot be blank', required=True, type=str)
+
+
+def assure_favourite_community(user_id):
+    if CommunityUserLinkModel.find_favourite_by_user(user_id):
+        return
+    communities: List[CommunityUserLinkModel] = CommunityUserLinkModel.find_by_user(user_id)
+    communities[0].is_favourite = True
+    communities[0].persist()
+    return communities[0]
 
 
 class AllCommunityInvitations(Resource):
@@ -107,6 +118,7 @@ class SingleCommunityInvitation(Resource):
 
         invitation.invitation_accepted = True
         invitation.persist()
+        assure_favourite_community(user.id)
 
         return SimpleMessage(COMMUNITY_INVITATION_ACCEPTED), 200
 
@@ -197,7 +209,7 @@ class SingleCommunity(Resource):
 class AllCommunities(Resource):
 
     @jwt_required
-    @marshal_with(CommunityModel.get_marshaller())
+    @marshal_with(CommunityModel.add_is_fav_to_marshaller(CommunityModel.get_detailed_marshaller()))
     def post(self):
         data = post_parser.parse_args()
 
@@ -221,6 +233,9 @@ class AllCommunities(Resource):
 
         try:
             new_community.persist()
+            faved_community: CommunityUserLinkModel = assure_favourite_community(founder.id)
+            if faved_community and faved_community.community_id == new_community.id:
+                new_community.is_favourite = faved_community.is_favourite
             return new_community, 201
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
