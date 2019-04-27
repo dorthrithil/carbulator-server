@@ -72,7 +72,10 @@ class GetCommunityStatisticCurrentPayoffIntervall(Resource):
     def get(self, community_id):
         latest_payoff = PayoffModel.find_latest_by_community(community_id)
 
-        from_datetime = latest_payoff.time_created.astimezone(pytz.utc)
+        if not latest_payoff:
+            from_datetime = datetime.datetime.min
+        else:
+            from_datetime = latest_payoff.time_created.astimezone(pytz.utc)
         to_datetime = datetime.datetime.now().astimezone(pytz.utc)
 
         return get_community_statistic(community_id, from_datetime, to_datetime), 200
