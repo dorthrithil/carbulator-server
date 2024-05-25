@@ -18,6 +18,8 @@ flask-migrate = "*"
 gunicorn = "*"
 schedule = "*"
 geocoder = "*"
+psycopg2-binary = "*"
+
 
 [dev-packages]
 

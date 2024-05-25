@@ -1,5 +1,5 @@
 class DefaultConfig(object):
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/carbulator'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://felixengelmann:@127.0.0.1/carbulator'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'thisKeyIsNotSecretChangeIt'
     JWT_SECRET_KEY = 'thisKeyIsNotSecretChangeIt'
