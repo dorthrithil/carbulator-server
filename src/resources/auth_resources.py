@@ -2,8 +2,8 @@ import re
 from datetime import datetime
 from uuid import uuid4
 
-from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
-                                get_jwt_identity, get_raw_jwt)
+from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required,
+                                get_jwt_identity, get_jwt)
 from flask_restful import Resource, reqparse, marshal_with, abort
 
 from src.messages.marshalling_objects import SimpleMessage, AuthResponse
@@ -92,7 +92,7 @@ class UserLogoutAccess(Resource):
     @jwt_required
     @marshal_with(SimpleMessage.get_marshaller())
     def post(self):
-        jti = get_raw_jwt()['jti']
+        jti = get_jwt()['jti']
         try:
             revoked_token = RevokedTokenModel(jti=jti)
             revoked_token.persist()
@@ -102,10 +102,10 @@ class UserLogoutAccess(Resource):
 
 
 class UserLogoutRefresh(Resource):
-    @jwt_refresh_token_required
+    @jwt_required(refresh=True)
     @marshal_with(SimpleMessage.get_marshaller())
     def post(self):
-        jti = get_raw_jwt()['jti']
+        jti = get_jwt()['jti']
         try:
             revoked_token = RevokedTokenModel(jti=jti)
             revoked_token.persist()
@@ -115,7 +115,7 @@ class UserLogoutRefresh(Resource):
 
 
 class TokenRefresh(Resource):
-    @jwt_refresh_token_required
+    @jwt_required(refresh=True)
     @marshal_with(AuthResponse.get_marshaller())
     def post(self):
         current_user = UserModel.find_by_username(get_jwt_identity())

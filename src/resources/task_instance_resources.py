@@ -5,6 +5,7 @@ import pytz
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, marshal_with, abort
 
+from src.app import app
 from src.messages.messages import UNAUTHORIZED
 from src.models.community import CommunityModel
 from src.models.task import TaskModel
@@ -48,30 +49,31 @@ def create_time_triggered_task_instances():
     """
     Checks if there are new task instances that have to be created and creates them.
     """
-    tasks = TaskModel.return_all()
+    with app.app_context():
+        tasks = TaskModel.return_all()
 
-    # Iterate over all time triggered tasks
-    for task in [t for t in tasks if t.time_interval]:
+        # Iterate over all time triggered tasks
+        for task in [t for t in tasks if t.time_interval]:
 
-        try:
-            # If current time is higher then trigger, add a new task instance
-            now = datetime.now(pytz.utc)
-            then = task.time_next_instance.replace(tzinfo=pytz.utc)
+            try:
+                # If current time is higher then trigger, add a new task instance
+                now = datetime.now(pytz.utc)
+                then = task.time_next_instance.replace(tzinfo=pytz.utc)
 
-            if now >= then:
-                # Create and persist task instance
-                new_task_instance = TaskInstanceModel()
-                new_task_instance.task = task
-                new_task_instance.is_open = True
-                new_task_instance.community = task.community
-                new_task_instance.persist()
+                if now >= then:
+                    # Create and persist task instance
+                    new_task_instance = TaskInstanceModel()
+                    new_task_instance.task = task
+                    new_task_instance.is_open = True
+                    new_task_instance.community = task.community
+                    new_task_instance.persist()
 
-                # Update time trigger and persist task
-                task.time_next_instance = now + task.time_interval
-                task.persist()
-        except:
-            # Don't fail on all just because one instance is bad
-            pass
+                    # Update time trigger and persist task
+                    task.time_next_instance = now + task.time_interval
+                    task.persist()
+            except:
+                # Don't fail on all just because one instance is bad
+                pass
 
 
 class GetOpenCommunityTaskInstances(Resource):

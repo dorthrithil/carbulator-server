@@ -36,7 +36,7 @@ from src.models.tour_passenger_link import TourPassengerLinkModel
 __all__ = ['TourPassengerLinkModel']  # prevents pycharm from removing predictor as unused import
 
 
-@jwt.token_in_blacklist_loader
+@jwt.token_in_blocklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return RevokedTokenModel.is_jti_blacklisted(jti)
