@@ -41,7 +41,7 @@ edit_tour_parser.add_argument('start_km', required=True, type=float)
 
 class FinishTour(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def put(self, community_id, id):
         data = finish_tour_parser.parse_args()
@@ -82,7 +82,7 @@ class FinishTour(Resource):
 
 class ForceFinishTour(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def put(self, community_id, id):
         data = finish_tour_parser.parse_args()
@@ -126,7 +126,7 @@ class ForceFinishTour(Resource):
 
 class SingleTour(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def put(self, community_id, id):
         data = edit_tour_parser.parse_args()
@@ -166,7 +166,7 @@ class SingleTour(Resource):
 
         return tour, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, community_id, id):
 
@@ -185,7 +185,7 @@ class SingleTour(Resource):
             abort(404, message=TOUR_NOT_FOUND)
         return SimpleMessage(TOUR_DELETED), 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self, community_id, id):
 
@@ -203,7 +203,7 @@ class SingleTour(Resource):
 
 class AllTours(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def post(self, community_id):
         data = parser.parse_args()
@@ -246,7 +246,7 @@ class AllTours(Resource):
 
 class CommunityTours(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self, community_id):
 
@@ -264,7 +264,7 @@ class CommunityTours(Resource):
 
 class RunningCommunityTours(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self, community_id):
 
@@ -282,7 +282,7 @@ class RunningCommunityTours(Resource):
 
 class UserTours(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -292,7 +292,7 @@ class UserTours(Resource):
 
 class LatestTour(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self, community_id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -314,7 +314,7 @@ class LatestTour(Resource):
 
 class RunningUserTours(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TourModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())

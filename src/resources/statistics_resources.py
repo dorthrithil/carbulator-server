@@ -59,7 +59,7 @@ def get_community_statistic(community_id, from_datetime, to_datetime):
 
 class GetCommunityStatistic(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityStatisticModel.get_marshaller())
     def get(self, community_id, from_datetime, to_datetime):
         return get_community_statistic(community_id, moment(from_datetime), moment(to_datetime)), 200
@@ -67,7 +67,7 @@ class GetCommunityStatistic(Resource):
 
 class GetCommunityStatisticCurrentPayoffIntervall(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityStatisticModel.get_marshaller())
     def get(self, community_id):
         latest_payoff = PayoffModel.find_latest_by_community(community_id)

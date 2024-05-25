@@ -12,7 +12,7 @@ parser.add_argument('parking_place_required', help='This field cannot be blank',
 
 class GetAccountSettings(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(AccountSettingsModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -24,7 +24,7 @@ class GetAccountSettings(Resource):
 
 class UpdateAccountSettings(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(AccountSettingsModel.get_marshaller())
     def put(self):
         data = parser.parse_args()

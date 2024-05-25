@@ -18,7 +18,7 @@ parser.add_argument('end', help='This field cannot be blank', required=True, typ
 
 class CreateEvent(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(EventModel.get_marshaller())
     def post(self, community_id):
         data = parser.parse_args()
@@ -54,7 +54,7 @@ class CreateEvent(Resource):
 
 class EditEvent(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(EventModel.get_marshaller())
     def put(self, event_id):
         data = parser.parse_args()
@@ -85,7 +85,7 @@ class EditEvent(Resource):
 
 class GetEvent(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(EventModel.get_marshaller())
     def get(self, event_id):
 
@@ -105,7 +105,7 @@ class GetEvent(Resource):
 
 class GetEvents(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(EventModel.get_marshaller())
     def get(self, community_id, from_datetime, to_datetime):
 
@@ -132,7 +132,7 @@ class GetEvents(Resource):
 
 class GetNextEvents(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(EventModel.get_marshaller())
     def get(self, community_id, number_of_events):
 
@@ -153,7 +153,7 @@ class GetNextEvents(Resource):
 
 class DeleteEvent(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, event_id):
 

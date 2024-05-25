@@ -18,14 +18,14 @@ search_parser.add_argument('only-uninvited', type=bool, location='args')
 
 
 class AllUsers(Resource):
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserModel.get_marshaller())
     def get(self):
         return UserModel.return_all(), 200
 
 
 class UserSearch(Resource):
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserModel.get_marshaller())
     def get(self):
         data = search_parser.parse_args()
@@ -49,7 +49,7 @@ class UserSearch(Resource):
 
 
 class ChangePassword(Resource):
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def put(self):
         password_parser = reqparse.RequestParser()

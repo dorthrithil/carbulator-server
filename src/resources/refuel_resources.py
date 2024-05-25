@@ -18,7 +18,7 @@ parser.add_argument('gas_station_name', required=False, type=str)
 
 class SingleRefuel(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(RefuelModel.get_marshaller())
     def get(self, community_id, id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -32,7 +32,7 @@ class SingleRefuel(Resource):
 
         return refuel, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(RefuelModel.get_marshaller())
     def put(self, community_id, id):
         data = parser.parse_args()
@@ -56,7 +56,7 @@ class SingleRefuel(Resource):
 
         return refuel, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, community_id, id):
 
@@ -81,7 +81,7 @@ class SingleRefuel(Resource):
 
 class AllRefuels(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(RefuelModel.get_marshaller())
     def post(self, community_id):
         data = parser.parse_args()
@@ -109,7 +109,7 @@ class AllRefuels(Resource):
         except:
             abort(500, message=INTERNAL_SERVER_ERROR)
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(RefuelModel.get_marshaller())
     def get(self, community_id):
 
@@ -127,7 +127,7 @@ class AllRefuels(Resource):
 
 class UserRefuels(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(RefuelModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())

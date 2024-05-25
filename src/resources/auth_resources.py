@@ -89,7 +89,7 @@ class UserLogin(Resource):
 
 
 class UserLogoutAccess(Resource):
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def post(self):
         jti = get_jwt()['jti']

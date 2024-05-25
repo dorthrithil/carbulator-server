@@ -15,7 +15,7 @@ parser.add_argument('model', help='This field cannot be blank', required=True, t
 
 class SingleCar(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CarModel.get_marshaller())
     def get(self, id):
         car = CarModel.find_by_id(id)
@@ -23,7 +23,7 @@ class SingleCar(Resource):
             abort(404, message=CAR_DOESNT_EXIST)
         return car, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CarModel.get_marshaller())
     def put(self, id):
         data = parser.parse_args()
@@ -40,7 +40,7 @@ class SingleCar(Resource):
 
         return car, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, id):
         try:
@@ -52,7 +52,7 @@ class SingleCar(Resource):
 
 class AllCars(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CarModel.get_marshaller())
     def post(self):
         data = parser.parse_args()
@@ -75,7 +75,7 @@ class AllCars(Resource):
 
 class UserCars(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CarModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())

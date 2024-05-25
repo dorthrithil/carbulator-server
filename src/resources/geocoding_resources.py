@@ -8,7 +8,7 @@ from src.util.geocoding import GeocodingResult, geocode
 
 class Geocode(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(GeocodingResult.get_marshaller())
     def get(self, query):
         try:

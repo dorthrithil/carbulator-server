@@ -34,7 +34,7 @@ def set_km_to_next_instance(tasks):
 
 class CreateTask(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskModel.get_marshaller())
     def post(self, community_id):
         parser = reqparse.RequestParser()
@@ -105,7 +105,7 @@ class CreateTask(Resource):
 
 class UpdateTask(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskModel.get_marshaller())
     def put(self, task_id):
         parser = reqparse.RequestParser()
@@ -157,7 +157,7 @@ class UpdateTask(Resource):
 
 class GetTask(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskModel.get_marshaller())
     def get(self, task_id):
 
@@ -179,7 +179,7 @@ class GetTask(Resource):
 
 class GetCommunityTasks(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskModel.get_marshaller())
     def get(self, community_id):
         tasks: List[TaskModel] = TaskModel.find_by_community(community_id)
@@ -197,7 +197,7 @@ class GetCommunityTasks(Resource):
 
 class DeleteTask(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, task_id):
 

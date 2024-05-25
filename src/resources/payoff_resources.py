@@ -18,7 +18,7 @@ from src.util.simplify_debt_matrix import simplify_debt_matrix
 
 class AllPayoffs(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(PayoffModel.get_marshaller())
     def post(self, id):
         community = CommunityModel.find_by_id(id)
@@ -128,7 +128,7 @@ class AllPayoffs(Resource):
 
         return payoff, 201
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(PayoffModel.get_marshaller())
     def get(self, id):
         community = CommunityModel.find_by_id(id)
@@ -147,7 +147,7 @@ class AllPayoffs(Resource):
 
 class SinglePayoff(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(PayoffModel.get_marshaller())
     def get(self, id):
 
@@ -170,7 +170,7 @@ class SinglePayoff(Resource):
 
 class CommunityDebts(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(DebtModel.get_marshaller())
     def get(self, id):
         community = CommunityModel.find_by_id(id)
@@ -189,7 +189,7 @@ class CommunityDebts(Resource):
 
 class UserDebts(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(DebtModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -201,7 +201,7 @@ class UserDebts(Resource):
 
 class SettleDebt(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(DebtModel.get_marshaller())
     def put(self, id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -229,7 +229,7 @@ class SettleDebt(Resource):
 
 class UnsettleDebt(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(DebtModel.get_marshaller())
     def put(self, id):
         user = UserModel.find_by_username(get_jwt_identity())

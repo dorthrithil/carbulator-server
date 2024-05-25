@@ -78,7 +78,7 @@ def create_time_triggered_task_instances():
 
 class GetOpenCommunityTaskInstances(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskInstanceModel.get_marshaller())
     def get(self, community_id):
         community: CommunityModel = CommunityModel.find_by_id(community_id)
@@ -96,7 +96,7 @@ class GetOpenCommunityTaskInstances(Resource):
 
 class GetOpenAccountTaskInstances(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskInstanceModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -113,7 +113,7 @@ class GetOpenAccountTaskInstances(Resource):
 
 class FinishTaskInstances(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(TaskInstanceModel.get_marshaller())
     def put(self, task_instance_id):
         user = UserModel.find_by_username(get_jwt_identity())

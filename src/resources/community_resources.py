@@ -40,7 +40,7 @@ def assure_favourite_community(user_id):
 
 class AllCommunityInvitations(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def post(self):
         data = invitation_parser.parse_args()
@@ -73,7 +73,7 @@ class AllCommunityInvitations(Resource):
 
 class OpenCommunityInvitationsForUser(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityUserLinkModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -82,7 +82,7 @@ class OpenCommunityInvitationsForUser(Resource):
 
 class InvitedUsers(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserModel.get_marshaller())
     def get(self, community_id: int):
 
@@ -101,7 +101,7 @@ class InvitedUsers(Resource):
 
 class SingleCommunityInvitation(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def put(self, community_id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -122,7 +122,7 @@ class SingleCommunityInvitation(Resource):
 
         return SimpleMessage(COMMUNITY_INVITATION_ACCEPTED), 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, community_id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -148,7 +148,7 @@ class SingleCommunityInvitation(Resource):
 
 class SingleCommunity(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityModel.get_detailed_marshaller())
     def get(self, id):
 
@@ -167,7 +167,7 @@ class SingleCommunity(Resource):
 
         return community, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityModel.get_marshaller())
     def put(self, id):
         data = put_parser.parse_args()
@@ -182,7 +182,7 @@ class SingleCommunity(Resource):
 
         return community, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def delete(self, id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -208,7 +208,7 @@ class SingleCommunity(Resource):
 
 class AllCommunities(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityModel.add_is_fav_to_marshaller(CommunityModel.get_detailed_marshaller()))
     def post(self):
         data = post_parser.parse_args()
@@ -243,7 +243,7 @@ class AllCommunities(Resource):
 
 class UserCommunities(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityModel.add_is_fav_to_marshaller(CommunityModel.get_detailed_marshaller()))
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -264,7 +264,7 @@ class UserCommunities(Resource):
 
 class CommunityUsers(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserModel.get_marshaller())
     def get(self, community_id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -278,7 +278,7 @@ class CommunityUsers(Resource):
 
 class MarkCommunityAsFavourite(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(SimpleMessage.get_marshaller())
     def put(self, community_id):
         user = UserModel.find_by_username(get_jwt_identity())
@@ -306,7 +306,7 @@ class MarkCommunityAsFavourite(Resource):
 
 class FavouriteCommunity(Resource):
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(CommunityModel.get_marshaller())
     def get(self):
         user = UserModel.find_by_username(get_jwt_identity())
